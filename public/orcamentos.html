@@ -1,0 +1,275 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novo Orçamento</title>
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <style>
+        nav { background: #333; padding: 10px; margin-bottom: 20px; }
+        nav a { color: white; margin-right: 15px; text-decoration: none; font-weight: bold; }
+        
+        /* Estilos da Calculadora */
+        .secao-calc { background: #222; padding: 15px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #444; }
+        .resumo-flutuante { 
+            background: #1a4d1a; color: white; padding: 15px; 
+            position: sticky; bottom: 0; border-top: 2px solid #4CAF50;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .item-check { display: flex; justify-content: space-between; padding: 8px; border-bottom: 1px solid #333; }
+        label { display: block; margin-bottom: 5px; color: #aaa; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="index.html">👥 Clientes</a>
+        <a href="servicos.html">📦 Serviços</a>
+        <a href="orcamentos.html">💰 Orçamentos</a>
+    </nav>
+
+    <div class="container" style="margin-bottom: 80px;"> <h1>Criar Orçamento</h1>
+
+        <form id="form-orcamento">
+            
+            <div class="secao-calc">
+                <h3>1. O Evento</h3>
+                <label>Cliente:</label>
+                <select id="cliente_select" style="width: 100%; padding: 10px; margin-bottom: 10px;" required>
+                    <option value="">Carregando clientes...</option>
+                </select>
+
+                <label>Título do Evento (Ex: Casamento Maria):</label>
+                <input type="text" id="titulo" required>
+
+                <label>Data:</label>
+                <input type="date" id="data" required>
+            </div>
+
+            <div class="secao-calc">
+                <h3>2. Selecione os Serviços</h3>
+                <div id="lista-servicos-check">
+                    <p>Carregando serviços...</p>
+                </div>
+            </div>
+
+            <div class="secao-calc">
+                <h3>3. Logística & Custos</h3>
+                <label>Local do Evento (Cidade):</label>
+                <input type="text" id="local">
+
+                <div style="display: flex; gap: 10px;">
+                    <div style="flex:1">
+                        <label>Distância (KM ida):</label>
+                        <input type="number" id="distancia" value="0" oninput="calcularTotal()">
+                    </div>
+                    <div style="flex:1">
+                        <label>Custo/KM (R$):</label>
+                        <input type="number" id="custo_km" value="1.00" step="0.10" oninput="calcularTotal()">
+                    </div>
+                </div>
+
+                <label>Hospedagem/Alimentação (R$):</label>
+                <input type="number" id="custo_extra" value="50.00" oninput="calcularTotal()">
+            </div>
+
+            <button type="submit" style="width: 100%; margin-top: 20px;">💾 SALVAR ORÇAMENTO</button>
+        </form>
+
+        <hr>
+        <h2>Orçamentos Recentes</h2>
+        <ul id="lista-historico"></ul>
+    </div>
+
+    <div class="resumo-flutuante">
+        <div>
+            <small>Serviços: <span id="total-servicos">R$ 0,00</span></small><br>
+            <small>Logística: <span id="total-logistica">R$ 50,00</span></small>
+        </div>
+        <div style="text-align: right;">
+            <small>TOTAL FINAL</small><br>
+            <strong style="font-size: 1.2em;" id="total-geral">R$ 50,00</strong>
+        </div>
+    </div>
+
+    <script type="module">
+        const API_URL = '/.netlify/functions';
+        
+        // Elementos da tela
+        const clienteSelect = document.getElementById('cliente_select');
+        const areaServicos = document.getElementById('lista-servicos-check');
+        const elTotalServicos = document.getElementById('total-servicos');
+        const elTotalLogistica = document.getElementById('total-logistica');
+        const elTotalGeral = document.getElementById('total-geral');
+
+        // Variáveis globais
+        let servicosDisponiveis = [];
+
+        // --- 1. INICIALIZAÇÃO (Carrega dados) ---
+        async function init() {
+            // Carrega Clientes
+            const resCli = await fetch(`${API_URL}/clientes`);
+            const clientes = await resCli.json();
+            
+            clienteSelect.innerHTML = '<option value="">Selecione o Cliente...</option>';
+            clientes.forEach(cli => {
+                const opt = document.createElement('option');
+                opt.value = cli.id;
+                opt.innerText = cli.nome_razao_social;
+                clienteSelect.appendChild(opt);
+            });
+
+            // Carrega Serviços
+            const resServ = await fetch(`${API_URL}/servicos`);
+            servicosDisponiveis = await resServ.json();
+            
+            areaServicos.innerHTML = '';
+            servicosDisponiveis.forEach((serv, index) => {
+                const div = document.createElement('div');
+                div.className = 'item-check';
+                div.innerHTML = `
+                    <label style="margin:0; color: white; display:flex; align-items:center; gap:10px; width:100%;">
+                        <input type="checkbox" value="${index}" onchange="calcularTotal()">
+                        <span>${serv.nome}</span>
+                    </label>
+                    <strong style="color: #81c784;">R$ ${serv.preco_base}</strong>
+                `;
+                areaServicos.appendChild(div);
+            });
+
+            carregarHistorico();
+            calcularTotal(); // Já calcula o inicial
+        }
+
+        // --- 2. A MÁGICA DA MATEMÁTICA ---
+        window.calcularTotal = function() {
+            // A. Soma os Serviços marcados
+            let somaServicos = 0;
+            const checkboxes = areaServicos.querySelectorAll('input[type="checkbox"]:checked');
+            checkboxes.forEach(chk => {
+                const index = chk.value;
+                somaServicos += servicosDisponiveis[index].preco_base;
+            });
+
+            // B. Calcula Logística
+            const km = parseFloat(document.getElementById('distancia').value) || 0;
+            const valorKm = parseFloat(document.getElementById('custo_km').value) || 0;
+            const extra = parseFloat(document.getElementById('custo_extra').value) || 0;
+            
+            // Ida e volta (km * 2)
+            const somaLogistica = (km * 2 * valorKm) + extra;
+
+            // C. Atualiza a tela
+            const totalFinal = somaServicos + somaLogistica;
+
+            elTotalServicos.innerText = somaServicos.toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
+            elTotalLogistica.innerText = somaLogistica.toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
+            elTotalGeral.innerText = totalFinal.toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
+
+            return { somaServicos, somaLogistica, totalFinal };
+        };
+
+        // --- 3. SALVAR NO BANCO ---
+        document.getElementById('form-orcamento').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const totais = window.calcularTotal();
+            const checkboxes = areaServicos.querySelectorAll('input[type="checkbox"]:checked');
+            
+            // Monta a lista de itens selecionados
+            const itensSelecionados = [];
+            checkboxes.forEach(chk => {
+                const s = servicosDisponiveis[chk.value];
+                itensSelecionados.push({ nome: s.nome, preco: s.preco_base });
+            });
+
+            const payload = {
+                cliente_id: clienteSelect.value,
+                titulo: document.getElementById('titulo').value,
+                data: document.getElementById('data').value,
+                local: document.getElementById('local').value,
+                distancia: document.getElementById('distancia').value,
+                custo_logistica: totais.somaLogistica,
+                valor_servicos: totais.somaServicos,
+                total_geral: totais.totalFinal,
+                itens_selecionados: itensSelecionados
+            };
+
+            const btn = e.target.querySelector('button');
+            btn.innerText = "Salvando...";
+
+            try {
+                const res = await fetch(`${API_URL}/orcamentos`, {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+                
+                if (res.ok) {
+                    alert("Orçamento criado com sucesso!");
+                    window.location.reload();
+                } else {
+                    alert("Erro ao salvar.");
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Erro de conexão.");
+            }
+            btn.innerText = "💾 SALVAR ORÇAMENTO";
+        });
+
+async function carregarHistorico() {
+            const ul = document.getElementById('lista-historico');
+            ul.innerHTML = '<p>Carregando...</p>';
+            
+            const res = await fetch(`${API_URL}/orcamentos`);
+            const lista = await res.json();
+            
+            ul.innerHTML = '';
+            
+            if (lista.length === 0) {
+                ul.innerHTML = '<p>Nenhum orçamento feito ainda.</p>';
+                return;
+            }
+
+            lista.forEach(orc => {
+                const li = document.createElement('li');
+                li.style.marginBottom = "15px";
+                li.style.padding = "10px";
+                li.style.background = "#333";
+                li.style.borderRadius = "5px";
+                
+                // Formata valor
+                const valorFormatado = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(orc.valor_total_contrato);
+                
+                // Lógica do WhatsApp
+                // Remove caracteres não numéricos do telefone para o link funcionar
+                const foneLimpo = orc.telefone_whatsapp ? orc.telefone_whatsapp.replace(/\D/g, '') : '';
+                
+                const msg = `Olá ${orc.nome_razao_social}! 🥰\nSegue o orçamento prévio para o evento *${orc.titulo_evento}*.\n\nValor Total: *${valorFormatado}*.\n\nPodemos agendar uma reunião para fechar os detalhes?`;
+                
+                const linkWhats = `https://wa.me/55${foneLimpo}?text=${encodeURIComponent(msg)}`;
+
+                // Se não tiver telefone cadastrado, avisa
+                const btnWhats = foneLimpo 
+                    ? `<a href="${linkWhats}" target="_blank" style="background:#25D366; color:white; text-decoration:none; padding:5px 10px; border-radius:4px; font-weight:bold; font-size:0.9em;">Enviar no WhatsApp 📲</a>`
+                    : `<span style="color:#999; font-size:0.8em;">(Cliente sem whats)</span>`;
+
+                li.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <strong style="font-size:1.1em">${orc.titulo_evento}</strong><br>
+                            <span style="color:#aaa;">${orc.nome_razao_social}</span>
+                        </div>
+                        <div style="text-align:right;">
+                            <div style="color:#4CAF50; font-weight:bold; margin-bottom:5px;">${valorFormatado}</div>
+                            ${btnWhats}
+                        </div>
+                    </div>
+                `;
+                ul.appendChild(li);
+            });
+        }
+
+        init();
+    </script>
+</body>
+</html>

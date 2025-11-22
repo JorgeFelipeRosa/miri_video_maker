@@ -1,0 +1,106 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo de Serviços</title>
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <style>
+        /* Pequeno ajuste para o menu ficar visível */
+        nav { background: #333; padding: 10px; margin-bottom: 20px; }
+        nav a { color: white; margin-right: 15px; text-decoration: none; font-weight: bold; }
+        nav a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="index.html">👥 Clientes</a>
+        <a href="servicos.html">📦 Serviços/Pacotes</a>
+    </nav>
+
+    <div class="container">
+        <h1>Catálogo de Pacotes</h1>
+        
+        <div class="card">
+            <h2>Novo Serviço</h2>
+            <form id="form-servico">
+                <input type="text" id="nome" placeholder="Nome do Pacote (ex: Casamento Gold)" required>
+                <input type="text" id="descricao" placeholder="Descrição curta (ex: Filme + Teaser)">
+                <input type="number" id="preco" placeholder="Preço Base (R$)" step="0.01" required>
+                <button type="submit">Salvar Pacote</button>
+            </form>
+        </div>
+
+        <div class="lista-area">
+            <h2>Pacotes Ativos</h2>
+            <ul id="lista-servicos">
+                <li>Carregando...</li>
+            </ul>
+        </div>
+    </div>
+
+    <script type="module">
+        const API_URL = '/.netlify/functions';
+        const lista = document.getElementById('lista-servicos');
+        const form = document.getElementById('form-servico');
+
+        // 1. Buscar Serviços
+        async function carregarServicos() {
+            const res = await fetch(`${API_URL}/servicos`);
+            const servicos = await res.json();
+
+            lista.innerHTML = '';
+            
+            if (servicos.length === 0) {
+                lista.innerHTML = '<p>Nenhum pacote cadastrado.</p>';
+                return;
+            }
+
+            servicos.forEach(servico => {
+                const li = document.createElement('li');
+                // Formata o preço para R$
+                const precoFormatado = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(servico.preco_base);
+                
+                li.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; width:100%;">
+                        <div>
+                            <strong>${servico.nome}</strong><br>
+                            <small>${servico.descricao}</small>
+                        </div>
+                        <div style="font-weight:bold; color:#4CAF50;">
+                            ${precoFormatado}
+                        </div>
+                    </div>
+                `;
+                lista.appendChild(li);
+            });
+        }
+
+        // 2. Salvar Serviço
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = form.querySelector('button');
+            btn.innerText = "Salvando...";
+
+            const dados = {
+                nome: document.getElementById('nome').value,
+                descricao: document.getElementById('descricao').value,
+                preco: document.getElementById('preco').value
+            };
+
+            await fetch(`${API_URL}/servicos`, {
+                method: 'POST',
+                body: JSON.stringify(dados)
+            });
+
+            form.reset();
+            carregarServicos();
+            btn.innerText = "Salvar Pacote";
+        });
+
+        // Inicia carregando
+        carregarServicos();
+    </script>
+</body>
+</html>
