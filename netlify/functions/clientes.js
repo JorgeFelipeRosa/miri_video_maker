@@ -1,53 +1,87 @@
-﻿// netlify/functions/clientes.js
-const db = require("./_db"); // Importa a conexão que criamos acima
+﻿const db = require("./_db");
 
 exports.handler = async (event, context) => {
-  // O Netlify chama essa função quando alguém acessa /api/clientes
-
   try {
-    // 1. Se for um GET (buscar clientes)
+    
+    // --- LISTAR (GET) ---
     if (event.httpMethod === "GET") {
-      const resultado = await db.execute("SELECT * FROM clientes ORDER BY id DESC");
+      const idParam = event.queryStringParameters?.id;
       
-      return {
-        statusCode: 200,
-        body: JSON.stringify(resultado.rows),
-      };
+      if (idParam) {
+          const res = await db.execute({ 
+              sql: "SELECT * FROM clientes WHERE id = ?", 
+              args: [idParam] 
+          });
+          return { statusCode: 200, body: JSON.stringify(res.rows[0] || {}) };
+      }
+      
+      const result = await db.execute("SELECT * FROM clientes ORDER BY id DESC");
+      return { statusCode: 200, body: JSON.stringify(result.rows) };
     }
 
-    // 2. Se for um POST (criar novo cliente)
+    // --- CRIAR (POST) ---
     if (event.httpMethod === "POST") {
       const dados = JSON.parse(event.body);
       
-      // Validação simples
-      if (!dados.nome) {
-        return { statusCode: 400, body: "Nome é obrigatório" };
-      }
-
-      const query = `
-        INSERT INTO clientes (nome_razao_social, cpf_cnpj, telefone_whatsapp, email)
-        VALUES (?, ?, ?, ?)
-      `;
-      
+      // CORREÇÃO: Coluna 'whatsapp' em vez de 'telefone_whatsapp'
       await db.execute({
-        sql: query,
-        args: [dados.nome, dados.cpf, dados.whatsapp, dados.email]
+        sql: `INSERT INTO clientes (
+            nome_razao_social, cpf_cnpj, whatsapp, email, 
+            cep, logradouro, numero, bairro, cidade, uf
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        args: [
+            dados.nome || "Sem Nome",
+            dados.cpf || null,
+            dados.whatsapp || "",
+            dados.email || "",
+            dados.cep || "",
+            dados.logradouro || "",
+            dados.numero || "",
+            dados.bairro || "",
+            dados.cidade || "",
+            dados.uf || ""
+        ]
       });
-
-      return {
-        statusCode: 201,
-        body: JSON.stringify({ message: "Cliente criado com sucesso!" }),
-      };
+      return { statusCode: 201, body: JSON.stringify({ message: "Cliente criado" }) };
     }
 
-    // Se não for nem GET nem POST
+    // --- ATUALIZAR (PUT) ---
+    if (event.httpMethod === "PUT") {
+        const dados = JSON.parse(event.body);
+        
+        if (!dados.id) {
+            return { statusCode: 400, body: JSON.stringify({ error: "ID do cliente é obrigatório" }) };
+        }
+
+        // CORREÇÃO: Coluna 'whatsapp' corrigida aqui também
+        await db.execute({
+            sql: `UPDATE clientes SET 
+                  nome_razao_social=?, cpf_cnpj=?, whatsapp=?, email=?, 
+                  cep=?, logradouro=?, numero=?, bairro=?, cidade=?, uf=?, 
+                  updated_at=CURRENT_TIMESTAMP
+                  WHERE id=?`,
+            args: [
+                dados.nome || "",
+                dados.cpf || null,
+                dados.whatsapp || "",
+                dados.email || "",
+                dados.cep || "",
+                dados.logradouro || "",
+                dados.numero || "",
+                dados.bairro || "",
+                dados.cidade || "",
+                dados.uf || "",
+                dados.id
+            ]
+        });
+
+        return { statusCode: 200, body: JSON.stringify({ message: "Dados atualizados com sucesso!" }) };
+    }
+
     return { statusCode: 405, body: "Método não permitido" };
 
   } catch (error) {
-    console.error(error);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: "Erro interno no servidor" }),
-    };
+    console.error("ERRO NO BACKEND CLIENTES:", error);
+    return { statusCode: 500, body: JSON.stringify({ error: error.message }) };
   }
 };

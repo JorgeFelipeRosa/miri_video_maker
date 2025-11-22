@@ -1,1 +1,115 @@
-﻿
+﻿/* --- VARIÁVEIS E RESET --- */
+:root {
+    --gold: #D4AF37;
+    --gold-glow: rgba(212, 175, 55, 0.3);
+    --bg-deep: #050505;
+    --bg-panel: #121212;
+    --bg-input: #1E1E1E;
+    --glass: rgba(255, 255, 255, 0.03);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --text-main: #ffffff;
+    --text-muted: #888;
+    --danger-red: #ff5555;
+    --success-green: #0aff6c;
+}
+
+* { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
+
+body {
+    margin: 0;
+    background-color: var(--bg-deep);
+    color: var(--text-main);
+    font-family: 'Montserrat', sans-serif;
+    background-image: radial-gradient(circle at 50% 0%, #1a1500 0%, #050505 80%);
+    background-attachment: fixed;
+    padding-bottom: 140px; /* Espaço para o footer fixo */
+    overflow-x: hidden;
+}
+
+/* --- LAYOUT --- */
+.container { max-width: 800px; margin: 0 auto; padding: 0 15px; position: relative; z-index: 1; }
+
+nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; margin-bottom: 20px; }
+.nav-link { color: var(--text-muted); text-decoration: none; font-size: 1rem; display: flex; align-items: center; gap: 5px; transition: 0.3s; }
+.nav-link:hover { color: var(--gold); }
+.logo-text { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--gold); letter-spacing: 1px; }
+
+/* --- COMPONENTES --- */
+.glass-panel {
+    background: var(--glass);
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 16px;
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(10px);
+}
+
+h3 { font-family: 'Playfair Display', serif; font-weight: 400; font-size: 1.1rem; margin: 0 0 15px 0; color: #eee; display: flex; align-items: center; justify-content: space-between; }
+h3 i { color: var(--gold); margin-right: 8px; }
+
+/* Inputs */
+label { display: block; margin-bottom: 6px; color: var(--text-muted); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+
+input, select, textarea {
+    width: 100%; padding: 12px;
+    background: var(--bg-input);
+    border: 1px solid #333;
+    color: white; border-radius: 8px;
+    margin-bottom: 15px;
+    font-family: var(--font-body); font-size: 1rem;
+    transition: 0.3s;
+}
+input:focus, select:focus, textarea:focus { border-color: var(--gold); box-shadow: 0 0 10px var(--gold-glow); }
+
+/* Tabs */
+.tabs { display: flex; gap: 10px; margin-bottom: 20px; background: rgba(0,0,0,0.3); padding: 5px; border-radius: 10px; }
+.tab-btn { flex: 1; padding: 10px; background: transparent; border: none; color: var(--text-muted); cursor: pointer; border-radius: 8px; font-weight: 600; transition: 0.3s; }
+.tab-btn.active { background: rgba(212, 175, 55, 0.15); color: var(--gold); }
+
+/* Botões */
+.btn-primary { width: 100%; padding: 16px; background: linear-gradient(135deg, #b88a4d 0%, #eecf94 50%, #b88a4d 100%); color: #000; font-weight: 700; font-size: 0.95rem; border: none; border-radius: 10px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; margin-top: 10px; }
+.btn-secondary { width: 100%; padding: 14px; background: transparent; border: 1px solid var(--gold); color: var(--gold); border-radius: 10px; cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px; }
+.search-trigger { background: var(--gold); color: #000; border: none; border-radius: 8px; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; margin-left: 10px; }
+
+/* --- LISTA DE HISTÓRICO (PADRONIZADA) --- */
+#lista-historico, #lista-completa { display: flex; flex-direction: column; gap: 12px; }
+
+.history-item, .list-item {
+    display: flex; justify-content: space-between; align-items: center;
+    background: var(--bg-panel);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 15px;
+    transition: 0.2s;
+    cursor: pointer;
+}
+.history-item:active, .list-item:active { transform: scale(0.98); border-color: var(--gold); }
+
+.h-info, .item-info { flex: 1; overflow: hidden; margin-right: 15px; }
+.h-title, .item-title { font-weight: 600; font-size: 1rem; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 4px; }
+.h-sub, .item-sub { font-size: 0.8rem; color: var(--text-muted); display: flex; align-items: center; gap: 5px; }
+
+.h-actions, .item-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.h-price, .item-price { color: var(--gold); font-weight: 700; font-family: 'Playfair Display'; font-size: 1.1rem; margin-right: 5px; }
+
+.btn-icon { 
+    width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; 
+    background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); 
+    color: #aaa; cursor: pointer; transition: 0.2s; text-decoration: none;
+}
+.btn-icon:hover { border-color: var(--gold); color: var(--gold); }
+
+/* --- PDF HIDDEN --- */
+#pdf-wrapper-all { position: fixed; top: 0; left: -9999px; width: 800px; z-index: -100; visibility: visible; background: white; }
+.pdf-document { width: 800px; background-color: #ffffff !important; color: #000000 !important; padding: 40px; font-family: 'Montserrat', sans-serif; }
+.pdf-document * { color: #000000 !important; border-color: #000000 !important; }
+.pdf-document h1, .pdf-document h2 { color: #D4AF37 !important; font-family: 'Playfair Display', serif; }
+.pdf-document table th { background-color: #f0f0f0 !important; }
+
+/* --- MODAIS --- */
+.modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+.modal-content { background: #121212; width: 90%; max-width: 500px; max-height: 90vh; border-radius: 15px; border: 1px solid var(--gold); padding: 25px; overflow-y: auto; display: flex; flex-direction: column; }
+.result-item { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); cursor: pointer; display: flex; justify-content: space-between; color: white; }
+
+/* --- FOOTER --- */
+.resumo-flutuante { background: #0a0a0a; padding: 15px 20px; position: fixed; bottom: 0; left: 0; width: 100%; border-top: 1px solid var(--gold); display: flex; justify-content: space-between; align-items: center; z-index: 100; }

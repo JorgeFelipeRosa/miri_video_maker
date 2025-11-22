@@ -1,0 +1,265 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Produção | Miriã</title>
+    <link rel="stylesheet" href="css/global.css">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        /* --- ESTILOS GERAIS --- */
+        :root {
+            --gold: #D4AF37;
+            --bg-deep: #050505;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.08);
+            --text-main: #ffffff;
+            --text-muted: #888;
+            --st-agendado: #888; --st-gravando: #D4AF37; --st-edicao: #00f2ff; --st-entregue: #0aff6c;
+        }
+        * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
+        body { margin: 0; background-color: var(--bg-deep); background-image: radial-gradient(circle at top center, #1a1500 0%, #050505 70%); background-attachment: fixed; color: var(--text-main); font-family: 'Montserrat', sans-serif; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        
+        .header-fixed { padding: 15px 20px; background: rgba(10, 10, 10, 0.9); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(255,255,255,0.05); z-index: 100; }
+        .nav-link { color: var(--text-muted); text-decoration: none; font-size: 1.1rem; }
+        .page-title { font-family: 'Playfair Display', serif; font-size: 1.3rem; color: var(--gold); letter-spacing: 1px; }
+        
+        .kanban-container { flex-grow: 1; overflow-x: auto; display: flex; gap: 15px; padding: 20px; scroll-snap-type: x mandatory; }
+        .column { min-width: 85vw; max-width: 350px; height: 100%; display: flex; flex-direction: column; scroll-snap-align: center; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 16px; }
+        .col-header { padding: 15px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); display: flex; justify-content: space-between; align-items: center; }
+        .col-body { flex-grow: 1; overflow-y: auto; padding: 15px; }
+        
+        .card { background: rgba(30, 30, 30, 0.4); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 15px; margin-bottom: 15px; position: relative; transition: transform 0.2s; box-shadow: 0 4px 20px rgba(0,0,0,0.2); cursor: pointer; }
+        .card:active { transform: scale(0.98); }
+        .card[data-status="2"] { border-left: 3px solid var(--st-gravando); }
+        .card[data-status="3"] { border-left: 3px solid var(--st-edicao); }
+        .card[data-status="5"] { border-left: 3px solid var(--st-entregue); }
+        
+        /* --- NOVO MODAL DESIGN --- */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); backdrop-filter: blur(8px); align-items: center; justify-content: center; }
+        .modal-content { background: #111; width: 95%; max-width: 550px; max-height: 90vh; border-radius: 20px; border: 1px solid var(--gold-dim); display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 0 50px rgba(0,0,0,0.8); }
+        
+        .modal-header { padding: 20px 20px 10px 20px; text-align: center; position: relative; }
+        .modal-close { position: absolute; right: 15px; top: 15px; background: none; border: none; color: #666; font-size: 1.5rem; cursor: pointer; }
+        
+        .event-highlight { text-align: center; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 20px; }
+        .event-date-badge { display: inline-block; background: rgba(212, 175, 55, 0.15); color: var(--gold); padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; border: 1px solid var(--gold); margin-bottom: 10px; }
+        .event-title { font-family: 'Playfair Display'; font-size: 1.8rem; margin: 0; line-height: 1.2; color: white; }
+
+        .modal-body { padding: 0 20px 20px 20px; overflow-y: auto; }
+
+        /* Seções do Modal */
+        .section-title { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; margin: 20px 0 10px 0; display: flex; align-items: center; gap: 8px; }
+        .section-title::after { content: ''; flex-grow: 1; height: 1px; background: var(--border); }
+
+        .info-group { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 10px; border: 1px solid var(--border); }
+        .info-row { display: flex; margin-bottom: 8px; font-size: 0.9rem; }
+        .info-row i { color: var(--gold); margin-right: 10px; width: 20px; text-align: center; }
+        .info-row:last-child { margin-bottom: 0; }
+
+        .finance-summary { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .fin-box { background: #0a0a0a; padding: 15px; border-radius: 10px; text-align: center; border: 1px solid var(--border); }
+        .fin-label { font-size: 0.7rem; color: #666; text-transform: uppercase; }
+        .fin-val { font-family: 'Playfair Display'; font-size: 1.3rem; color: #fff; margin-top: 5px; }
+
+        .finance-row-list { display: flex; justify-content: space-between; padding: 12px; background: rgba(255,255,255,0.03); border-radius: 8px; margin-bottom: 5px; align-items: center; border-left: 3px solid var(--st-entregue); }
+        
+        /* Inputs e Botões */
+        input { width: 100%; padding: 12px; background: #222; border: 1px solid #444; color: white; border-radius: 8px; margin-bottom: 10px; }
+        .btn-primary { width: 100%; padding: 12px; background: var(--gold); color: #000; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
+        .btn-outline { width: 100%; padding: 10px; background: transparent; border: 1px dashed #444; color: #888; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+        .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+
+        /* Card Styles (Mini) */
+        .card-date { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px; }
+        .card-title { font-size: 1rem; font-weight: 600; color: #fff; margin-bottom: 4px; }
+        .card-client { font-size: 0.8rem; color: #aaa; }
+        .card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+        .card-price { color: var(--gold); font-weight: 700; font-size: 0.85rem; }
+        .btn-icon { width: 30px; height: 30px; border-radius: 50%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #ccc; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+
+        @media (min-width: 1024px) { .column { min-width: 300px; max-width: 320px; } }
+    </style>
+</head>
+<body>
+
+    <div class="header-fixed">
+        <nav style="width:100%">
+            <a href="index.html" class="nav-link"><i class="ph ph-arrow-left"></i></a>
+            <div class="page-title">Produção</div>
+            <div style="width:20px"></div>
+        </nav>
+    </div>
+
+    <div class="kanban-container">
+        <div class="column"><div class="col-header"><span style="color:var(--st-agendado)">📅 Agendado</span><span id="count-1">0</span></div><div class="col-body" id="list-1"></div></div>
+        <div class="column"><div class="col-header"><span style="color:var(--st-gravando)">🎥 Gravando</span><span id="count-2">0</span></div><div class="col-body" id="list-2"></div></div>
+        <div class="column"><div class="col-header"><span style="color:var(--st-edicao)">💻 Edição</span><span id="count-3">0</span></div><div class="col-body" id="list-3"></div></div>
+        <div class="column"><div class="col-header"><span style="color:var(--st-entregue)">✅ Entregue</span><span id="count-5">0</span></div><div class="col-body" id="list-5"></div></div>
+    </div>
+
+    <div id="modal-detalhes" class="modal">
+        <div class="modal-content">
+            <button onclick="fecharModal()" class="modal-close">&times;</button>
+            
+            <div class="modal-header">
+                <div class="event-highlight">
+                    <div class="event-date-badge" id="m-data">dd/mm/aaaa</div>
+                    <h2 class="event-title" id="m-titulo">Título do Evento</h2>
+                </div>
+            </div>
+            
+            <div class="modal-body">
+                
+                <div class="section-title">CLIENTE</div>
+                <div class="info-group">
+                    <div class="info-row"><i class="ph ph-user"></i> <strong style="color:white" id="m-cliente">Nome do Cliente</strong></div>
+                    <div class="info-row"><i class="ph ph-whatsapp-logo"></i> <span id="m-whats">...</span></div>
+                    <div class="info-row"><i class="ph ph-envelope-simple"></i> <span id="m-email">...</span></div>
+                    <div class="info-row"><i class="ph ph-identification-card"></i> <span id="m-cpf">...</span></div>
+                </div>
+
+                <div class="section-title">LOCAL & ENDEREÇO</div>
+                <div class="info-group">
+                    <div class="info-row"><i class="ph ph-map-pin"></i> <strong style="color:white" id="m-local">Local do Evento</strong></div>
+                    <div class="info-row" style="align-items: flex-start;">
+                        <i class="ph ph-house-line" style="margin-top:3px;"></i> 
+                        <span id="m-endereco" style="font-size:0.85rem; color:#aaa; line-height:1.4;">Rua Exemplo, 123 - Bairro, Cidade - UF</span>
+                    </div>
+                </div>
+
+                <div class="section-title">FINANCEIRO</div>
+                <div class="finance-summary">
+                    <div class="fin-box">
+                        <div class="fin-label">Valor Total</div>
+                        <div class="fin-val" id="m-total">R$ 0,00</div>
+                    </div>
+                    <div class="fin-box" style="border-color: rgba(255,255,255,0.1);">
+                        <div class="fin-label">Falta Receber</div>
+                        <div class="fin-val" id="m-restante" style="color:#ff5555">R$ 0,00</div>
+                    </div>
+                </div>
+
+                <div id="lista-pagamentos"></div>
+
+                <button onclick="document.getElementById('form-pagamento').style.display='block'" class="btn-outline" style="margin-top:10px;">+ Registrar Pagamento</button>
+                
+                <div id="form-pagamento" style="display:none; margin-top:15px; background:#1a1a1a; padding:15px; border-radius:10px; border:1px solid var(--gold-dim);">
+                    <label style="color:var(--gold)">Valor Recebido (R$)</label>
+                    <input type="number" id="pay-valor" step="0.01" style="border-color:var(--gold);">
+                    <button class="btn-primary" onclick="salvarPagamento()">CONFIRMAR</button>
+                </div>
+
+                <div class="section-title" style="margin-top:30px;">ITENS CONTRATADOS</div>
+                <ul id="m-itens" style="list-style:none; padding:0; color:#ccc; font-size:0.9rem; margin-bottom:20px;"></ul>
+                
+                <div style="height: 20px;"></div> </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = '/.netlify/functions';
+        let pedidoAtualId = null;
+
+        async function carregar() {
+            [1,2,3,5].forEach(id => { document.getElementById(`list-${id}`).innerHTML = ''; document.getElementById(`count-${id}`).innerText = '0'; });
+            try {
+                const res = await fetch(`${API_URL}/pedidos`);
+                const pedidos = await res.json();
+
+                pedidos.forEach(p => {
+                    let colId = p.id_status === 4 ? 5 : p.id_status;
+                    const lista = document.getElementById(`list-${colId}`);
+                    if(!lista) return;
+
+                    document.getElementById(`count-${colId}`).innerText = parseInt(document.getElementById(`count-${colId}`).innerText) + 1;
+
+                    const data = new Date(p.data_evento).toLocaleDateString('pt-BR').slice(0,5);
+                    const valor = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(p.valor_contrato_final);
+
+                    let controls = '';
+                    if (colId > 1) { const prev = colId === 5 ? 3 : colId - 1; controls += `<button class="btn-icon" onclick="event.stopPropagation(); mover(${p.id}, ${prev})"><i class="ph ph-caret-left"></i></button>`; }
+                    if (colId < 5) { const next = colId === 3 ? 5 : colId + 1; const icon = next === 5 ? 'check' : 'caret-right'; controls += `<button class="btn-icon" onclick="event.stopPropagation(); mover(${p.id}, ${next})" style="border-color:var(--gold); color:var(--gold)"><i class="ph ph-${icon}"></i></button>`; }
+
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.setAttribute('data-status', colId);
+                    card.onclick = () => abrirDetalhes(p.id);
+                    
+                    card.innerHTML = `
+                        <div class="card-date">${data}</div>
+                        <div class="card-title">${p.titulo_evento}</div>
+                        <div class="card-client"><i class="ph ph-user"></i> ${p.nome_razao_social}</div>
+                        <div class="card-footer"><span class="card-price">${valor}</span><div class="move-controls">${controls}</div></div>
+                    `;
+                    lista.appendChild(card);
+                });
+            } catch(e) { console.error(e); }
+        }
+
+        window.mover = async (id, novoStatus) => {
+            if(!confirm("Mover pedido?")) return;
+            try { await fetch(`${API_URL}/pedidos`, { method: 'PUT', body: JSON.stringify({ id, id_status: novoStatus, acao: 'status' }) }); carregar(); } catch(e) {}
+        }
+
+        // --- ABRIR DETALHES REFORMULADO ---
+        window.abrirDetalhes = async (id) => {
+            pedidoAtualId = id;
+            document.getElementById('modal-detalhes').style.display = 'flex';
+            document.getElementById('form-pagamento').style.display = 'none';
+            
+            const res = await fetch(`${API_URL}/pedidos?id=${id}`);
+            const dados = await res.json();
+
+            // Preenche Topo
+            document.getElementById('m-titulo').innerText = dados.titulo_evento;
+            document.getElementById('m-data').innerText = new Date(dados.data_evento).toLocaleDateString('pt-BR');
+            
+            // Preenche Cliente
+            document.getElementById('m-cliente').innerText = dados.nome_razao_social;
+            document.getElementById('m-whats').innerText = dados.whatsapp || "---";
+            document.getElementById('m-email').innerText = dados.email || "---";
+            document.getElementById('m-cpf').innerText = dados.cpf_cnpj || "---";
+
+            // Preenche Local
+            document.getElementById('m-local').innerText = dados.local_evento || "Local não definido";
+            // Monta endereço completo
+            const end = `${dados.logradouro || ''}, ${dados.numero || ''} - ${dados.cidade || ''}`;
+            document.getElementById('m-endereco').innerText = end.length > 5 ? end : "Endereço não cadastrado.";
+
+            // Preenche Financeiro
+            document.getElementById('m-total').innerText = parseFloat(dados.valor_contrato_final).toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
+            
+            // Renderiza Itens
+            const ul = document.getElementById('m-itens'); ul.innerHTML = '';
+            dados.itens.forEach(i => { ul.innerHTML += `<li style="padding:8px 0; border-bottom:1px solid #222; display:flex; justify-content:space-between;"><span>${i.nome_item}</span> <span>R$ ${i.valor_final.toLocaleString('pt-BR', {minimumFractionDigits:2})}</span></li>`; });
+
+            renderizarFinanceiro(dados.financeiro, dados.valor_contrato_final);
+        };
+
+        function renderizarFinanceiro(pagamentos, total) {
+            const div = document.getElementById('lista-pagamentos'); div.innerHTML = '';
+            let pago = 0;
+            pagamentos.forEach(pg => {
+                pago += pg.valor_parcela;
+                const dataPg = new Date(pg.data_pagamento).toLocaleDateString('pt-BR');
+                div.innerHTML += `<div class="finance-row-list"><span style="color:#aaa; font-size:0.8rem;">${dataPg}</span><span style="color:var(--st-entregue); font-weight:bold;">+ R$ ${pg.valor_parcela.toLocaleString('pt-BR', {minimumFractionDigits:2})}</span></div>`;
+            });
+            const restante = total - pago;
+            const elRestante = document.getElementById('m-restante');
+            elRestante.innerText = restante.toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
+            elRestante.style.color = restante <= 0.1 ? 'var(--st-entregue)' : '#ff5555';
+            if(restante <= 0.1) elRestante.innerText = "QUITADO";
+        }
+
+        window.salvarPagamento = async () => {
+            const valor = document.getElementById('pay-valor').value; if(!valor) return;
+            await fetch(`${API_URL}/financeiro`, { method: 'POST', body: JSON.stringify({ id_pedido: pedidoAtualId, valor: parseFloat(valor) }) });
+            abrirDetalhes(pedidoAtualId);
+        };
+        window.fecharModal = () => { document.getElementById('modal-detalhes').style.display = 'none'; };
+        carregar();
+    </script>
+</body>
+</html>
