@@ -1,0 +1,181 @@
+﻿/* public/css/pages/pedidos.css */
+
+.main-content {
+    overflow: hidden; /* O Kanban tem scroll próprio */
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    padding-bottom: 0 !important; /* Remove padding extra aqui */
+}
+
+/* --- BOARD CONTAINER --- */
+.kanban-board {
+    display: flex;
+    gap: var(--spacing-md);
+    overflow-x: auto; /* Rolagem Horizontal */
+    overflow-y: hidden;
+    height: 100%;
+    padding-bottom: 20px;
+    padding-right: 20px;
+    
+    scrollbar-width: thin;
+    scrollbar-color: var(--gold-700) transparent;
+}
+
+.kanban-board::-webkit-scrollbar { height: 8px; }
+.kanban-board::-webkit-scrollbar-thumb { background: var(--gold-700); border-radius: 4px; }
+
+/* --- COLUNAS --- */
+.kanban-column {
+    min-width: 280px;
+    max-width: 320px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - 20px); /* Ajuste altura */
+}
+
+.column-header {
+    padding: 16px;
+    border-bottom: 1px solid var(--glass-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+}
+
+.column-header .count {
+    background: rgba(255,255,255,0.1);
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    color: #fff;
+}
+
+/* Cores dos Títulos */
+.header-agendado { color: var(--text-secondary); border-top: 3px solid var(--text-secondary); border-radius: 16px 16px 0 0; }
+.header-gravando { color: var(--warning); border-top: 3px solid var(--warning); border-radius: 16px 16px 0 0; }
+.header-edicao { color: #9b59b6; border-top: 3px solid #9b59b6; border-radius: 16px 16px 0 0; }
+.header-entregue { color: var(--success); border-top: 3px solid var(--success); border-radius: 16px 16px 0 0; }
+
+.column-body {
+    padding: 12px;
+    overflow-y: auto;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* --- CARDS --- */
+.kanban-card {
+    background: linear-gradient(145deg, rgba(40,40,40,1) 0%, rgba(20,20,20,1) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 16px;
+    cursor: grab;
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+}
+
+.kanban-card:active { cursor: grabbing; }
+.kanban-card:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.5); border-color: rgba(255,255,255,0.1); }
+
+.card-top { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.75rem; color: var(--text-secondary); }
+.card-date { display: flex; align-items: center; gap: 4px; font-weight: 600; }
+.card-title { color: var(--text-primary); font-size: 0.95rem; font-weight: 600; margin-bottom: 4px; line-height: 1.4; }
+.card-local { color: var(--text-muted); font-size: 0.75rem; display: flex; align-items: center; gap: 4px; }
+
+/* Estilos Especiais */
+.active-work { border-left: 3px solid #9b59b6; }
+.finished { opacity: 0.7; }
+
+/* =========================================
+   ESTILOS DO MODAL (NOVO)
+   ========================================= */
+.modal-overlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(5px);
+    z-index: 9999; display: none;
+    align-items: center; justify-content: center; padding: 10px;
+}
+.modal-overlay.active { display: flex; }
+
+.modal-glass {
+    width: 100%; max-width: 600px;
+    background: #151516; border: 1px solid var(--gold-400); border-radius: var(--radius-md);
+    padding: var(--spacing-xl); box-shadow: 0 0 50px rgba(0,0,0,0.8);
+    display: flex; flex-direction: column; max-height: 90vh;
+}
+
+.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.modal-header h3 { font-family: 'Cinzel', serif; color: var(--gold-400); font-size: 1.2rem; margin: 0; }
+.btn-close-modal { background: transparent; border: none; color: var(--text-secondary); font-size: 1.5rem; cursor: pointer; }
+
+.modal-body-scroll { overflow-y: auto; padding-right: 5px; }
+
+/* ABAS */
+.modal-tabs { display: flex; gap: 20px; margin-bottom: 20px; border-bottom: 1px solid var(--glass-border); }
+.tab-btn {
+    background: transparent; border: none; color: var(--text-secondary);
+    padding: 10px 0; cursor: pointer; border-bottom: 2px solid transparent;
+    font-weight: 600; transition: 0.2s;
+}
+.tab-btn.active { color: var(--gold-400); border-bottom-color: var(--gold-400); }
+.tab-content { display: none; }
+.tab-content.active { display: block; animation: fadeIn 0.3s; }
+
+/* FINANCEIRO */
+.finance-summary { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+.fin-card { background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px; text-align: center; border: 1px solid var(--glass-border); }
+.fin-card small { font-size: 0.65rem; color: #888; display: block; }
+.fin-card span { font-size: 0.9rem; font-weight: 700; color: #fff; }
+.fin-card.due span { color: var(--danger); }
+.fin-card.paid span { color: var(--success); }
+
+.add-payment-box { display: flex; gap: 8px; margin-bottom: 15px; }
+.btn-icon-action-plus {
+    background: var(--gold-400); color: #000; width: 40px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center; font-size: 1.2rem; transition: 0.2s;
+}
+.btn-icon-action-plus:hover { background: #fff; }
+
+.payment-list { display: flex; flex-direction: column; gap: 8px; }
+.payment-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px; background: rgba(255,255,255,0.05); border-radius: 8px;
+}
+.pay-check {
+    width: 24px; height: 24px; border-radius: 50%; border: 2px solid #555;
+    display: flex; align-items: center; justify-content: center; cursor: pointer; color: transparent; transition: 0.2s;
+}
+.pay-check.paid { background: var(--success); border-color: var(--success); color: #000; }
+
+/* Inputs dentro do Modal */
+.row-2-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.input-group { display: flex; flex-direction: column; gap: 6px; }
+.input-group label { color: var(--text-secondary); font-size: 0.85rem; }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* Mobile */
+@media (max-width: 768px) {
+    .kanban-board { scroll-snap-type: x mandatory; padding-bottom: 10px; }
+    .kanban-column { min-width: 85vw; scroll-snap-align: center; }
+}
+/* No final do arquivo */
+.nav-btn {
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: 0.2s;
+}
+.nav-btn:hover {
+    background: rgba(255,255,255,0.1);
+    color: var(--gold-400);
+}

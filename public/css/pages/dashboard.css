@@ -1,0 +1,71 @@
+﻿/* public/css/pages/dashboard.css */
+
+/* Ajuste específico para o Dashboard */
+.date-display {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    padding: 6px 16px;
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    color: var(--gold-400);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+/* --- GRID DOS INDICADORES (KPIs) --- */
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-xl);
+}
+
+.kpi-card {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-lg);
+    background: var(--glass-bg); /* Garante fundo se o glass falhar */
+}
+
+.kpi-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: var(--gold-400);
+}
+
+.kpi-icon.warning { color: var(--warning); }
+.kpi-icon.success { color: var(--success); }
+
+.kpi-info span {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.kpi-info h3 {
+    font-size: 1.25rem;
+    font-family: var(--font-body);
+    color: var(--text-primary);
+    font-weight: 700;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+    .kpi-grid {
+        grid-template-columns: 1fr; /* Uma coluna no celular */
+    }
+    .date-display {
+        display: none; /* Esconde a data no celular pra economizar espaço */
+    }
+}

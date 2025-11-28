@@ -1,0 +1,69 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Miriã Storymaker | Listas</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <link rel="stylesheet" href="/css/base/variables.css">
+    <link rel="stylesheet" href="/css/base/reset.css">
+    <link rel="stylesheet" href="/css/base/global.css">
+    <link rel="stylesheet" href="/css/components/sidebar.css">
+    <link rel="stylesheet" href="/css/components/buttons.css">
+    <link rel="stylesheet" href="/css/components/inputs.css">
+    <link rel="stylesheet" href="/css/pages/listas.css"> 
+</head>
+<body>
+
+    <div class="app-container">
+        <div id="sidebar-container"></div>
+
+        <main class="main-content">
+            <header class="header-std">
+                <div class="header-left">
+                    <button id="menu-toggle" class="btn-circle-glass"><i class="ph ph-list"></i></button>
+                    <div>
+                        <h2 class="title-std">Configurações</h2>
+                        <p style="font-size: 12px; color: var(--text-secondary);">Gerencie suas listas auxiliares</p>
+                    </div>
+                </div>
+            </header>
+
+            <div class="settings-container">
+                <aside class="settings-menu">
+                    <button class="menu-tab active" data-table="categorias_servico">
+                        <i class="ph ph-tag"></i> Categorias de Serviço
+                    </button>
+                    <button class="menu-tab" data-table="formas_pagamento">
+                        <i class="ph ph-credit-card"></i> Formas de Pagamento
+                    </button>
+                    <button class="menu-tab" data-table="origens_contato">
+                        <i class="ph ph-share-network"></i> Origens de Contato
+                    </button>
+                </aside>
+
+                <section class="settings-content glass-card">
+                    <div class="content-header">
+                        <h3 id="listTitle">Categorias</h3>
+                        <div class="input-with-action">
+                            <input type="text" id="inputNovoItem" class="input-glass" placeholder="Adicionar novo...">
+                            <button id="btnAddItem" class="btn-primary btn-small"><i class="ph ph-plus"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="items-list-scroll" id="listaItens">
+                        <p class="loading-text">Selecione uma lista...</p>
+                    </div>
+                </section>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="/js/modules/sidebar.js"></script>
+    <script src="/js/pages/listas.js"></script> 
+</body>
+</html>

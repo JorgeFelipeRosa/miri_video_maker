@@ -1,0 +1,33 @@
+﻿/* public/css/components/buttons.css */
+
+.btn-primary {
+    background: var(--gradient-gold);
+    color: var(--bg-dark); /* Texto escuro no fundo dourado fica mais legível */
+    font-weight: 700;
+    font-family: var(--font-body);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    
+    padding: var(--spacing-md) var(--spacing-xl);
+    border-radius: var(--radius-sm);
+    
+    /* Efeitos de transição */
+    transition: var(--transition-fast);
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2); /* Brilho dourado */
+    
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    width: 100%; /* No mobile ocupa tudo */
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px); /* Sobe um pouquinho */
+    box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+    filter: brightness(1.1); /* Fica mais brilhante */
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}

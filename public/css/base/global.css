@@ -1,0 +1,122 @@
+﻿/* public/css/base/global.css */
+
+:root {
+    /* --- CORES (Dark Luxury) --- */
+    --bg-body: #0f0f10; 
+    --bg-dark: #050505;
+    --gold-100: #F9Eeb8; 
+    --gold-400: #D4AF37; 
+    --gold-500: #C5A028;
+    --gold-700: #8A6E15; 
+    --gradient-gold: linear-gradient(135deg, var(--gold-400) 0%, var(--gold-700) 100%);
+    --success: #2ecc71; 
+    --danger: #e74c3c;  
+    --warning: #f1c40f; 
+    --text-primary: #FFFFFF;
+    --text-secondary: #A0A0A0; 
+    --text-muted: #555555;
+
+    /* --- VIDRO --- */
+    --glass-bg: rgba(255, 255, 255, 0.05);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --glass-blur: 12px;
+    --shadow-luxury: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+    
+    /* --- FONTES E MEDIDAS --- */
+    --font-display: 'Cinzel', serif; 
+    --font-body: 'Inter', sans-serif;
+    --radius-sm: 8px;
+    --radius-md: 16px;
+    --radius-full: 9999px;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    --transition-fast: 0.2s ease;
+}
+
+/* --- RESET BÁSICO --- */
+* { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
+body {
+    background-color: var(--bg-body);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden; /* O scroll será interno */
+}
+a { text-decoration: none; color: inherit; }
+ul { list-style: none; }
+button { cursor: pointer; border: none; background: none; font-family: inherit; }
+input, select, textarea { border: none; background: none; font-family: inherit; }
+
+/* --- LAYOUT PADRÃO (SIDEBAR + MAIN) --- */
+.app-container {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+    overflow: hidden;
+}
+
+.main-content {
+    flex: 1;
+    height: 100vh;
+    overflow-y: auto; /* Scroll aqui */
+    padding: var(--spacing-lg);
+    position: relative;
+}
+
+/* --- PADRÃO DE CABEÇALHO (HEADER STANDARD) --- */
+.header-std {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-xl);
+    padding-top: 10px;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+/* Botão Redondo de Vidro */
+.btn-circle-glass {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    color: var(--text-secondary);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem;
+    transition: var(--transition-fast);
+    text-decoration: none;
+}
+.btn-circle-glass:hover {
+    background: var(--gold-400);
+    color: var(--bg-dark);
+    border-color: var(--gold-400);
+}
+
+.title-std {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    color: var(--text-primary);
+    line-height: 1.1;
+}
+
+/* Scrollbar Bonita */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: var(--gold-700); }
+
+/* Responsivo Mobile */
+@media (max-width: 1024px) {
+    .header-std { margin-top: 10px; }
+    /* No mobile a sidebar é absoluta, então damos margem no header pra não colar */
+    .main-content { padding: var(--spacing-md); }
+}

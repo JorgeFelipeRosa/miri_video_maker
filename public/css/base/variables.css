@@ -1,0 +1,84 @@
+﻿/* Arquivo: public/css/base/variables.css
+    Tema: Dark Luxury Glassmorphism
+    Descrição: Definição central de cores, tipografia e efeitos.
+*/
+
+:root {
+    /* =========================================
+       1. PALETA DE CORES (Brand Colors)
+       ========================================= */
+    
+    /* Fundo Infinito (Não é preto puro, é um chumbo profundo para dar profundidade) */
+    --bg-body: #0f0f10; 
+    --bg-dark: #050505;
+
+    /* Dourado Premium (Gold Luxury) */
+    --gold-100: #F9Eeb8; /* Brilho */
+    --gold-400: #D4AF37; /* Base Dourada (Metálica) */
+    --gold-500: #C5A028;
+    --gold-700: #8A6E15; /* Sombra Dourada */
+
+    /* Gradiente Dourado (Para botões e destaques) */
+    --gradient-gold: linear-gradient(135deg, var(--gold-400) 0%, var(--gold-700) 100%);
+
+    /* Status (Semântica) */
+    --success: #2ecc71; /* Verde esmeralda */
+    --danger: #e74c3c;  /* Vermelho suave */
+    --warning: #f1c40f; /* Amarelo alerta */
+    
+    /* Texto */
+    --text-primary: #FFFFFF;
+    --text-secondary: #A0A0A0; /* Cinza prateado */
+    --text-muted: #555555;
+
+    /* =========================================
+       2. EFEITO DE VIDRO (Glassmorphism)
+       ========================================= */
+    
+    /* Vidro Base (Cards, Paineis) */
+    --glass-bg: rgba(255, 255, 255, 0.05); /* 5% de branco */
+    --glass-border: rgba(255, 255, 255, 0.1); /* Borda sutil */
+    --glass-shine: rgba(255, 255, 255, 0.08); /* Efeito hover */
+    --glass-blur: 12px; /* O desfoque do fundo */
+    
+    /* Sombra de Profundidade (Glow Dourado Sutil) */
+    --shadow-luxury: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+    --glow-gold: 0 0 15px rgba(212, 175, 55, 0.3);
+
+    /* =========================================
+       3. TIPOGRAFIA
+       ========================================= */
+    
+    /* Títulos Elegantes (Serifa - Lembra convite de casamento) */
+    --font-display: 'Cinzel', serif; 
+    
+    /* Texto de Leitura (Sans Serif - Moderno e legível) */
+    --font-body: 'Inter', sans-serif;
+
+    /* Tamanhos */
+    --text-xs: 0.75rem;   /* 12px */
+    --text-sm: 0.875rem;  /* 14px */
+    --text-base: 1rem;    /* 16px */
+    --text-lg: 1.125rem;  /* 18px */
+    --text-xl: 1.25rem;   /* 20px */
+    --text-2xl: 1.5rem;   /* 24px */
+
+    /* =========================================
+       4. BORDAS E ESPAÇAMENTOS
+       ========================================= */
+    --radius-sm: 8px;
+    --radius-md: 16px; /* Padrão dos Cards */
+    --radius-lg: 24px;
+    --radius-full: 9999px; /* Botões redondos */
+
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    
+    /* =========================================
+       5. TRANSIÇÕES (Animações Suaves)
+       ========================================= */
+    --transition-fast: 0.2s ease;
+    --transition-smooth: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}

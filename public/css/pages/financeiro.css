@@ -1,0 +1,107 @@
+﻿/* public/css/pages/financeiro.css */
+
+.main-content {
+    flex: 1;
+    height: 100vh;
+    overflow-y: auto;
+    padding: var(--spacing-lg);
+    padding-bottom: 150px;
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+/* Filtro de Mês (No Header) */
+.month-filter {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 8px 16px;
+    border-radius: 50px;
+    border: 1px solid var(--glass-border);
+}
+.month-filter button { color: #fff; font-size: 1.2rem; cursor: pointer; transition: 0.2s; }
+.month-filter button:hover { color: var(--gold-400); }
+.month-filter span { font-family: 'Cinzel', serif; font-weight: 700; color: var(--gold-400); min-width: 140px; text-align: center; }
+
+/* KPIs (Cards de Resumo) */
+.finance-dashboard {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-md);
+    margin-bottom: 40px;
+}
+
+.fin-kpi-card {
+    padding: 20px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.fin-kpi-card small { font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; }
+.fin-kpi-card h3 { font-size: 1.8rem; font-weight: 700; color: #fff; }
+
+.fin-kpi-card.received h3 { color: var(--success); }
+.fin-kpi-card.pending h3 { color: var(--warning); }
+
+.section-title {
+    font-family: 'Cinzel', serif;
+    color: var(--text-primary);
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+}
+
+/* Lista de Transações */
+.transactions-list {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.trans-row {
+    display: grid;
+    grid-template-columns: 80px 1fr auto; /* Data | Info | Valor */
+    align-items: center;
+    padding: 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    transition: 0.2s;
+}
+.trans-row:last-child { border-bottom: none; }
+.trans-row:hover { background: rgba(255,255,255,0.03); }
+
+/* Coluna Data */
+.trans-date {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(255,255,255,0.05);
+    padding: 6px;
+    border-radius: 8px;
+    width: 60px;
+}
+.trans-day { font-size: 1.2rem; font-weight: 700; color: #fff; }
+.trans-month { font-size: 0.6rem; text-transform: uppercase; color: var(--text-secondary); }
+
+/* Coluna Info */
+.trans-info { padding-left: 15px; }
+.trans-desc { font-size: 1rem; color: #fff; font-weight: 500; display: block; }
+.trans-client { font-size: 0.8rem; color: var(--text-secondary); }
+
+/* Coluna Valor */
+.trans-value { text-align: right; }
+.amount { font-size: 1.1rem; font-weight: 700; display: block; }
+.status-badge { font-size: 0.65rem; text-transform: uppercase; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-top: 4px;}
+
+.amount.paid { color: var(--success); }
+.status-badge.paid { background: rgba(46, 204, 113, 0.1); color: var(--success); }
+
+.amount.pending { color: var(--text-muted); }
+.status-badge.pending { background: rgba(255, 255, 255, 0.1); color: var(--text-secondary); }
+
+/* Mobile */
+@media (max-width: 768px) {
+    .header-std { flex-direction: column; gap: 15px; align-items: flex-start; }
+    .month-filter { width: 100%; justify-content: space-between; }
+}

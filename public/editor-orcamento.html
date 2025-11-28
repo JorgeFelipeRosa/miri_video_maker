@@ -1,0 +1,178 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Novo Orçamento | Storymaker</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <link rel="stylesheet" href="/css/base/variables.css">
+    <link rel="stylesheet" href="/css/base/reset.css">
+    <link rel="stylesheet" href="/css/base/global.css">
+    <link rel="stylesheet" href="/css/components/sidebar.css">
+    <link rel="stylesheet" href="/css/components/buttons.css">
+    <link rel="stylesheet" href="/css/components/inputs.css">
+    <link rel="stylesheet" href="/css/pages/editor.css">
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <div id="sidebar-container"></div>
+
+        <main class="main-content">
+            <header class="header-std">
+                <div class="header-left">
+                    <a href="orcamentos.html" class="btn-circle-glass"><i class="ph ph-arrow-left"></i></a>
+                    <h2 class="title-std" id="pageTitle">Novo Orçamento</h2>
+                </div>
+                <div style="width: 44px;"></div> 
+            </header>
+
+            <form id="orcamentoForm" class="editor-form">
+                <div class="input-group">
+                    <label style="font-size: 1.1rem; color: var(--gold-400);">Título do Evento</label>
+                    <input type="text" id="inputTitulo" placeholder="Ex: Casamento Maria & João" class="input-glass" style="font-size: 1.2rem; font-weight: bold;">
+                </div>
+
+                <section class="form-section">
+                    <h3 class="section-title"><i class="ph ph-user"></i> Cliente</h3>
+                    <div class="input-group">
+                        <label>Nome do Cliente</label>
+                        <div class="input-with-action">
+                            <input type="text" id="inputNome" placeholder="Busque ou digite..." class="input-glass">
+                            <button type="button" class="btn-search" id="btnBuscaCliente"><i class="ph ph-magnifying-glass"></i></button>
+                        </div>
+                    </div>
+                    <div class="input-group" style="margin-top: 12px;">
+                        <label>WhatsApp / Telefone</label>
+                        <input type="text" id="inputWhatsapp" class="input-glass">
+                    </div>
+                    <div class="row-2-col" style="margin-top: 12px;">
+                        <div class="input-group"><label>Data Evento</label><input type="date" class="input-glass" id="inputData"></div>
+                        <div class="input-group"><label>Cidade / Local</label><input type="text" id="inputLocal" class="input-glass"></div>
+                    </div>
+                </section>
+
+                <section class="form-section">
+                    <h3 class="section-title"><i class="ph ph-map-pin"></i> Detalhes & Logística</h3>
+                    <div class="input-group" style="margin-bottom: 12px;">
+                        <label>Validade (Dias)</label><input type="number" id="inputValidade" value="15" class="input-glass">
+                    </div>
+                    <div class="row-2-col">
+                        <div class="input-group"><label>Distância (Km)</label><input type="number" id="inputKm" placeholder="0" class="input-glass"></div>
+                        <div class="input-group"><label>Custo Gasolina</label><input type="text" id="custoGasolina" value="R$ 0,00" class="input-glass" readonly></div>
+                    </div>
+                    <div class="row-2-col">
+                        <div class="input-group"><label>Alimentação</label><input type="number" id="inputAlimentacao" class="input-glass"></div>
+                        <div class="input-group"><label>Hospedagem</label><input type="number" id="inputHospedagem" class="input-glass"></div>
+                    </div>
+                </section>
+
+                <section class="form-section">
+                    <h3 class="section-title"><i class="ph ph-video-camera"></i> Serviços</h3>
+                    <div class="add-service-btn-area">
+                        <button type="button" class="btn-primary" id="btnOpenServiceModal"><i class="ph ph-plus"></i> Adicionar Serviço</button>
+                    </div>
+                    <div class="items-list" id="listaItens"></div>
+                </section>
+
+                <section class="form-section">
+                    <h3 class="section-title"><i class="ph ph-note-pencil"></i> Observações</h3>
+                    <textarea class="input-glass" id="inputObs" rows="3"></textarea>
+                </section>
+                <div style="height: 120px;"></div>
+            </form>
+
+            <div class="floating-footer">
+                <div class="total-info"><small>Valor Final</small><h3 id="valorTotalGeral">R$ 0,00</h3></div>
+                <button id="btnSalvar" class="btn-primary btn-save"><span>SALVAR</span> <i class="ph ph-floppy-disk"></i></button>
+            </div>
+        </main>
+    </div>
+
+    <div class="modal-overlay" id="modalCliente">
+        <div class="modal-glass">
+            <div class="modal-header"><h3>Buscar Cliente</h3><button type="button" class="btn-close-modal"><i class="ph ph-x"></i></button></div>
+            <input type="text" id="searchClientInput" class="input-glass" placeholder="Nome..." autofocus>
+            <div class="search-results" id="resultsCliente"></div>
+        </div>
+    </div>
+    <div class="modal-overlay" id="modalServicos">
+        <div class="modal-glass">
+            <div class="modal-header"><h3>Adicionar Serviço</h3><button type="button" class="btn-close-modal"><i class="ph ph-x"></i></button></div>
+            <input type="text" id="searchServiceInput" class="input-glass" placeholder="Serviço...">
+            <div class="search-results" id="resultsServico"></div>
+        </div>
+    </div>
+    <div class="modal-overlay" id="modalSucesso">
+        <div class="modal-glass" style="text-align: center; max-width: 400px;">
+            <i class="ph ph-check-circle" style="font-size: 4rem; color: var(--success);"></i>
+            <h3 style="color: var(--text-primary); margin: 10px 0;">Salvo com Sucesso!</h3>
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;">
+                <button id="btnGerarPDFFinal" class="btn-primary">GERAR PDF</button>
+                <button id="btnVoltarSucesso" class="btn-secondary btn-close-modal" style="border: 1px solid var(--glass-border); padding: 12px; color: var(--text-secondary); background: transparent;">Voltar / Novo</button>
+            </div>
+        </div>
+    </div>
+    <div class="modal-overlay" id="modalContrato">
+        <div class="modal-glass">
+            <div class="modal-header"><h3>Dados para Contrato</h3><button type="button" class="btn-close-modal"><i class="ph ph-x"></i></button></div>
+            <div class="editor-form" style="overflow-y: auto; padding-right: 5px;">
+                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 15px;">Complete o cadastro para gerar o pedido.</p>
+                <div class="input-group"><label>CPF / CNPJ</label><input type="text" id="contratoCpf" class="input-glass"></div>
+                <div class="row-2-col">
+                    <div class="input-group"><label>CEP</label><input type="text" id="contratoCep" class="input-glass"></div>
+                    <div class="input-group"><label>Cidade</label><input type="text" id="contratoCidade" class="input-glass"></div>
+                </div>
+                <div class="input-group"><label>Endereço</label><input type="text" id="contratoRua" class="input-glass"></div>
+                <div class="row-2-col">
+                    <div class="input-group"><label>Número</label><input type="text" id="contratoNum" class="input-glass"></div>
+                    <div class="input-group"><label>Bairro</label><input type="text" id="contratoBairro" class="input-glass"></div>
+                </div>
+                <div class="input-group"><label>Estado (UF)</label><input type="text" id="contratoUF" class="input-glass" maxlength="2"></div>
+                <button id="btnConfirmarContrato" class="btn-primary" style="margin-top: 20px;">CONFIRMAR E GERAR PEDIDO</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="pdf-template" style="display: none;">
+        <div class="pdf-container">
+            <div class="pdf-header">
+                <div class="pdf-logo"><h1>MIRIÃ</h1><span>Storymaker</span></div>
+                <div class="pdf-meta"><h2 id="pdfTituloEvento">ORÇAMENTO</h2><p id="pdfDataEvento">DATA</p></div>
+            </div>
+            <div class="pdf-divider"></div>
+            <div class="pdf-section">
+                <h3>DADOS DO CLIENTE</h3>
+                <div class="pdf-grid-2">
+                    <div><small>Cliente</small><p id="pdfNomeCliente">-</p></div>
+                    <div><small>Local</small><p id="pdfLocal">-</p></div>
+                </div>
+            </div>
+            <div class="pdf-section">
+                <h3>SERVIÇOS CONTRATADOS</h3>
+                <table class="pdf-table">
+                    <thead><tr><th>Descrição</th><th style="text-align: right;">Valor</th></tr></thead>
+                    <tbody id="pdfListaItens"></tbody>
+                </table>
+            </div>
+            <div class="pdf-section pdf-totals-area">
+                <div class="pdf-logistica"><p><strong>Logística:</strong> <span id="pdfLogisticaInfo"></span></p><p><strong>Extras:</strong> <span id="pdfExtrasInfo"></span></p></div>
+                <div class="pdf-final-value"><small>INVESTIMENTO TOTAL</small><h1 id="pdfTotalGeral">R$ 0,00</h1></div>
+            </div>
+            <div class="pdf-footer">
+                <p>Válido até <strong id="pdfValidade"></strong>.</p>
+                <div class="pdf-signature"><p>Miriã Storymaker</p><small>www.miriastorymaker.com</small></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/utils/format.js"></script>
+    <script src="/js/modules/sidebar.js"></script>
+    <script src="/js/pages/editor.js"></script> 
+</body>
+</html>

@@ -1,0 +1,99 @@
+﻿.app-container {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+    position: relative; /* Necessário para posicionamento no mobile */
+}
+
+/* ==========================================================================
+   ESTILO PADRÃO (MOBILE / IPHONE 16 & 17 PRO)
+   A lógica aqui é: Primeiro desenha pro celular, depois ajusta pro PC.
+   ========================================================================== */
+
+/* A Sidebar fica "escondida" na esquerda */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: -100%; /* Joga ela pra fora da tela */
+    width: 280px;
+    height: 100%;
+    margin: 0;
+    border-radius: 0 24px 24px 0; /* Arredonda só a direita */
+    z-index: 999; /* Fica em cima de tudo */
+    background: rgba(15, 15, 16, 0.95); /* Quase sólido para leitura */
+    backdrop-filter: blur(20px);
+    border-right: 1px solid var(--glass-border);
+    
+    transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1); /* Animação suave */
+}
+
+/* Classe que o JS vai adicionar quando clicar no botão */
+.sidebar.active {
+    left: 0; /* Traz a sidebar pra tela */
+    box-shadow: 0 0 100px rgba(0,0,0,0.8); /* Sombra pesada atrás */
+}
+
+/* O Cabeçalho da Sidebar */
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    color: var(--gold-400);
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    font-weight: 700;
+    margin-bottom: var(--spacing-xl);
+    padding-left: var(--spacing-sm);
+    margin-top: var(--spacing-md); /* Espaço para a "Ilha Dinâmica" do iPhone */
+}
+
+.logo-icon { font-size: 1.5rem; }
+
+/* Links */
+.nav-links {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    flex: 1;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    font-size: var(--text-base); /* Texto maior no dedo */
+    font-weight: 500;
+    transition: var(--transition-fast);
+}
+
+.nav-item.active {
+    background: var(--gradient-gold);
+    color: var(--bg-dark);
+    font-weight: 700;
+}
+.nav-item i { font-size: 1.5rem; }
+
+/* Botão Sair */
+.sidebar-footer { margin-bottom: var(--spacing-xl); }
+.logout:hover { color: var(--danger); }
+
+
+/* ==========================================================================
+   AJUSTE PARA NOTEBOOK / DESKTOP (Telas acima de 1024px)
+   Aqui "desfazemos" o estilo mobile e fixamos a barra.
+   ========================================================================== */
+@media (min-width: 1024px) {
+    /* No PC, esconde o botão de menu do cabeçalho, pois a barra lateral já está lá */
+    #menu-toggle {
+        display: none !important;
+    }
+}
+
+@media (max-width: 1024px) {
+    #menu-toggle {
+        display: flex !important;
+    }
+}

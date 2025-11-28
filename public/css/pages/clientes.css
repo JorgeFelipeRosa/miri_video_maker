@@ -1,0 +1,138 @@
+﻿/* public/css/pages/clientes.css */
+
+.main-content {
+    flex: 1;
+    height: 100vh;
+    overflow-y: auto;
+    padding: var(--spacing-lg);
+    padding-bottom: 150px;
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+/* Barra de Busca */
+.search-bar-container { margin-bottom: var(--spacing-md); }
+.input-icon-wrapper { position: relative; display: flex; align-items: center; }
+.search-icon { position: absolute; left: 16px; color: var(--gold-400); font-size: 1.2rem; pointer-events: none; }
+.search-input {
+    padding-left: 48px !important;
+    background: rgba(0, 0, 0, 0.3) !important;
+    border-color: var(--glass-border);
+    height: 50px;
+    border-radius: 12px;
+}
+.search-input:focus { border-color: var(--gold-400); }
+
+/* GRID */
+.clients-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--spacing-md);
+    padding-bottom: 50px;
+}
+
+/* CARD DE CLIENTE */
+.client-card {
+    background: linear-gradient(145deg, rgba(30,30,30,1) 0%, rgba(10,10,10,1) 100%);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: 0.2s;
+    position: relative;
+}
+.client-card:hover { border-color: var(--gold-400); transform: translateY(-2px); }
+
+/* Avatar */
+.client-avatar {
+    width: 50px; height: 50px;
+    border-radius: 50%;
+    background: rgba(212, 175, 55, 0.1);
+    color: var(--gold-400);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 700;
+    border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.client-info { flex: 1; }
+.client-name { font-size: 1rem; font-weight: 600; color: #fff; margin-bottom: 4px; }
+.client-meta { font-size: 0.8rem; color: var(--text-secondary); display: flex; flex-direction: column; gap: 2px; }
+.client-meta i { color: var(--gold-400); margin-right: 4px; }
+
+/* Ações */
+.client-actions { display: flex; flex-direction: column; gap: 8px; }
+.btn-icon-mini {
+    color: var(--text-secondary);
+    background: rgba(255,255,255,0.05);
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    transition: 0.2s; cursor: pointer;
+}
+.btn-icon-mini:hover { background: var(--gold-400); color: #000; }
+.btn-icon-mini.whatsapp:hover { background: #2ecc71; color: #fff; }
+
+/* =========================================
+   ESTILOS DO MODAL (IMPORTANTE)
+   ========================================= */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.85); /* Fundo escuro atrás */
+    backdrop-filter: blur(5px);
+    z-index: 9999; /* Fica na frente de tudo */
+    
+    display: none; /* Escondido por padrão */
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+/* Quando tem a classe .active, vira Flex e aparece */
+.modal-overlay.active {
+    display: flex !important;
+}
+
+.modal-glass {
+    width: 100%;
+    max-width: 600px;
+    background: #151516;
+    border: 1px solid var(--gold-400);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-xl);
+    box-shadow: 0 0 50px rgba(0,0,0,0.8);
+    display: flex;
+    flex-direction: column;
+    max-height: 90vh; /* Altura máxima */
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--glass-border);
+    padding-bottom: 10px;
+}
+.modal-header h3 { font-family: 'Cinzel', serif; color: var(--gold-400); font-size: 1.2rem; margin: 0; }
+.btn-close-modal { background: transparent; border: none; color: var(--text-secondary); font-size: 1.5rem; cursor: pointer; }
+
+/* Formulário do Modal */
+.editor-form { display: flex; flex-direction: column; gap: 16px; overflow-y: auto; }
+.form-subtitle {
+    font-size: 0.75rem; text-transform: uppercase; color: var(--gold-400);
+    border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 4px; margin-bottom: 10px; margin-top: 10px;
+}
+.input-group { display: flex; flex-direction: column; gap: 6px; }
+.input-group label { color: var(--text-secondary); font-size: 0.85rem; }
+.row-2-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+/* Mobile */
+@media (max-width: 768px) {
+    .clients-grid { grid-template-columns: 1fr; }
+}

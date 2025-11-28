@@ -1,0 +1,39 @@
+﻿/* public/css/components/inputs.css */
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    text-align: left;
+}
+
+.input-group label {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    font-weight: 500;
+    margin-left: 4px;
+}
+
+.input-glass {
+    width: 100%;
+    padding: var(--spacing-md);
+    border-radius: var(--radius-sm);
+    
+    /* Fundo mais escuro que o card para dar profundidade */
+    background: rgba(0, 0, 0, 0.3); 
+    border: 1px solid var(--glass-border);
+    color: var(--text-primary);
+    
+    transition: var(--transition-fast);
+}
+
+.input-glass::placeholder {
+    color: var(--text-muted);
+}
+
+/* Quando clica para digitar */
+.input-glass:focus {
+    background: rgba(0, 0, 0, 0.5);
+    border-color: var(--gold-400); /* Borda fica dourada */
+    box-shadow: var(--glow-gold); /* Brilho externo */
+}

@@ -2,125 +2,85 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pacotes | Miriã</title>
-    <link rel="stylesheet" href="css/global.css">
-    <link rel="stylesheet" href="css/layout.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Miriã Storymaker | Serviços</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <style>
-        .card-item { background: var(--bg-panel); padding: 15px; margin-bottom: 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.05); }
-        .action-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 5px; transition: 0.2s; }
-        .action-btn:hover { color: var(--gold-primary); }
-    </style>
+
+    <link rel="stylesheet" href="/css/base/variables.css">
+    <link rel="stylesheet" href="/css/base/reset.css">
+    <link rel="stylesheet" href="/css/base/global.css">
+    <link rel="stylesheet" href="/css/components/sidebar.css">
+    <link rel="stylesheet" href="/css/components/buttons.css">
+    <link rel="stylesheet" href="/css/components/inputs.css">
+    <link rel="stylesheet" href="/css/pages/servicos.css"> 
 </head>
 <body>
-    <div class="container">
-        <nav>
-            <a href="index.html">← Voltar</a>
-            <div class="logo-text">Catálogo de Serviços</div>
-        </nav>
 
-        <div class="card">
-            <h2 id="titulo-form" style="margin-bottom: 15px; color: var(--gold-primary);">Novo Serviço</h2>
-            <form id="form-servico">
-                <input type="hidden" id="id_servico"> <label style="display:block; color:#aaa; margin-bottom:5px">Nome do Pacote:</label>
-                <input type="text" id="nome" placeholder="Ex: Casamento Gold" required style="width:100%; padding:12px; background:var(--bg-input); border:1px solid #333; color:white; border-radius:6px; margin-bottom:15px;">
-                
-                <label style="display:block; color:#aaa; margin-bottom:5px">Descrição Técnica:</label>
-                <input type="text" id="descricao" placeholder="Ex: 2 Câmeras, Drone, 8h" style="width:100%; padding:12px; background:var(--bg-input); border:1px solid #333; color:white; border-radius:6px; margin-bottom:15px;">
-                
-                <label style="display:block; color:#aaa; margin-bottom:5px">Preço Base (R$):</label>
-                <input type="number" id="preco" step="0.01" required style="width:100%; padding:12px; background:var(--bg-input); border:1px solid #333; color:white; border-radius:6px; margin-bottom:15px;">
-                
-                <div style="display:flex; gap:10px">
-                    <button type="submit" id="btn-salvar" style="flex:1; padding:15px; background:var(--gold-primary); border:none; border-radius:6px; font-weight:bold; cursor:pointer;">CADASTRAR</button>
-                    <button type="button" id="btn-cancelar" onclick="cancelarEdicao()" style="display:none; padding:15px; background:#333; color:white; border:none; border-radius:6px; cursor:pointer;">Cancelar</button>
+    <div class="app-container">
+        <div id="sidebar-container"></div>
+
+        <main class="main-content">
+            
+            <header class="header-std">
+                <div class="header-left">
+                    <button id="menu-toggle" class="btn-circle-glass"><i class="ph ph-list"></i></button>
+                    <div>
+                        <h2 class="title-std">Catálogo</h2>
+                        <p style="font-size: 12px; color: var(--text-secondary);">Seus produtos e preços</p>
+                    </div>
                 </div>
-            </form>
-        </div>
+                <button id="btnNovoServico" class="btn-primary btn-new">
+                    <i class="ph ph-plus"></i> <span>Novo</span>
+                </button>
+            </header>
 
-        <h3 style="margin-top: 30px;">Pacotes Ativos</h3>
-        <div id="lista-servicos">Carregando...</div>
+            <div class="services-grid" id="listaServicos">
+                </div>
+
+        </main>
     </div>
 
-    <script>
-        const API_URL = '/.netlify/functions';
-        let listaAtual = [];
-
-        async function carregarServicos() {
-            const lista = document.getElementById('lista-servicos');
-            const res = await fetch(`${API_URL}/servicos`);
-            listaAtual = await res.json();
-
-            lista.innerHTML = '';
-            if (listaAtual.length === 0) {
-                lista.innerHTML = '<p style="color:#aaa">Nenhum pacote cadastrado.</p>';
-                return;
-            }
-
-            listaAtual.forEach(servico => {
-                const div = document.createElement('div');
-                div.className = 'card-item';
-                const preco = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(servico.preco_base);
-                
-                div.innerHTML = `
-                    <div>
-                        <strong style="font-size:1.1em">${servico.nome}</strong><br>
-                        <small style="color:#aaa">${servico.descricao_tecnica || ''}</small>
-                    </div>
-                    <div style="text-align:right; display:flex; align-items:center; gap:15px;">
-                        <span style="color:var(--success); font-weight:bold;">${preco}</span>
-                        <button class="action-btn" onclick="editarServico(${servico.id})" title="Editar"><i class="ph ph-pencil-simple" style="font-size:1.2em"></i></button>
-                    </div>
-                `;
-                lista.appendChild(div);
-            });
-        }
-
-        window.editarServico = function(id) {
-            const servico = listaAtual.find(s => s.id === id);
-            if(servico) {
-                document.getElementById('id_servico').value = servico.id;
-                document.getElementById('nome').value = servico.nome;
-                document.getElementById('descricao').value = servico.descricao_tecnica;
-                document.getElementById('preco').value = servico.preco_base;
-                
-                document.getElementById('titulo-form').innerText = "Editar Pacote";
-                document.getElementById('btn-salvar').innerText = "ATUALIZAR";
-                document.getElementById('btn-cancelar').style.display = 'block';
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-        }
-
-        window.cancelarEdicao = function() {
-            document.getElementById('form-servico').reset();
-            document.getElementById('id_servico').value = "";
-            document.getElementById('titulo-form').innerText = "Novo Serviço";
-            document.getElementById('btn-salvar').innerText = "CADASTRAR";
-            document.getElementById('btn-cancelar').style.display = 'none';
-        }
-
-        document.getElementById('form-servico').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const id = document.getElementById('id_servico').value;
-            const dados = {
-                id: id || null,
-                nome: document.getElementById('nome').value,
-                descricao: document.getElementById('descricao').value,
-                preco: document.getElementById('preco').value
-            };
-
-            const metodo = id ? 'PUT' : 'POST';
-            const btn = document.getElementById('btn-salvar');
-            btn.innerText = "Salvando...";
-
-            await fetch(`${API_URL}/servicos`, { method: metodo, body: JSON.stringify(dados) });
+    <div class="modal-overlay" id="modalServico">
+        <div class="modal-glass">
+            <div class="modal-header">
+                <h3>Novo Serviço</h3>
+                <button type="button" class="btn-close-modal"><i class="ph ph-x"></i></button>
+            </div>
             
-            cancelarEdicao();
-            carregarServicos();
-        });
+            <div class="editor-form" style="overflow-y: auto;">
+                
+                <div class="input-group">
+                    <label>Nome do Serviço</label>
+                    <input type="text" id="servNome" class="input-glass" placeholder="Ex: Casamento Gold">
+                </div>
 
-        carregarServicos();
-    </script>
+                <div class="row-2-col">
+                    <div class="input-group">
+                        <label>Categoria</label>
+                        <select id="servCategoria" class="input-glass">
+                            <option value="">Carregando...</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Preço Base (R$)</label>
+                        <input type="number" id="servPreco" class="input-glass" placeholder="0.00">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Descrição Técnica (Opcional)</label>
+                    <textarea id="servDescricao" class="input-glass" rows="3" placeholder="O que está incluso..."></textarea>
+                </div>
+
+                <button id="btnSalvarServico" class="btn-primary" style="margin-top: 20px;">SALVAR SERVIÇO</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/utils/format.js"></script>
+    <script src="/js/modules/sidebar.js"></script>
+    <script src="/js/pages/servicos.js"></script> 
 </body>
 </html>

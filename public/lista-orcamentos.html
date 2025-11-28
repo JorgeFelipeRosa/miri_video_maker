@@ -6,58 +6,11 @@
     <title>Histórico | Miriã</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
     <link rel="stylesheet" href="css/global.css">
-
-    <style>
-        /* --- CSS PADRONIZADO (IGUAL AO ORÇAMENTOS) --- */
-        :root { --gold: #D4AF37; --bg-deep: #050505; --bg-panel: #121212; --text-main: #ffffff; --text-muted: #888; }
-        body { margin: 0; background-color: var(--bg-deep); color: var(--text-main); font-family: 'Montserrat', sans-serif; padding-bottom: 40px; background-image: radial-gradient(circle at 50% 0%, #1a1500 0%, #050505 80%); background-attachment: fixed; }
-        .container { max-width: 800px; margin: 0 auto; padding: 0 15px; }
-        
-        nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; margin-bottom: 20px; }
-        .nav-link { color: var(--text-muted); text-decoration: none; font-size: 1rem; display: flex; align-items: center; gap: 5px; }
-        .logo-text { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--gold); letter-spacing: 1px; }
-
-        .search-box { position: relative; margin-bottom: 30px; }
-        .search-input { width: 100%; padding: 15px 15px 15px 45px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white; font-family: 'Montserrat'; font-size: 1rem; }
-        .search-input:focus { border-color: var(--gold); }
-        .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 1.2rem; }
-
-        /* LISTA CARD */
-        #lista-completa { display: flex; flex-direction: column; gap: 15px; }
-        .list-item { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 20px; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; cursor: pointer; }
-        .list-item:active { transform: scale(0.98); border-color: var(--gold); }
-        
-        .item-info { flex: 1; margin-right: 15px; overflow: hidden; }
-        .item-title { font-weight: 600; font-size: 1.1rem; color: white; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .item-sub { font-size: 0.8rem; color: var(--text-muted); display: flex; align-items: center; gap: 5px; }
-        
-        .item-actions { display: flex; align-items: center; gap: 10px; }
-        .item-price { color: var(--gold); font-weight: 700; font-family: 'Playfair Display'; font-size: 1.1rem; margin-right: 10px; }
-        
-        .btn-icon { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); color: #aaa; cursor: pointer; transition: 0.2s; text-decoration: none; }
-        .btn-icon:hover { border-color: var(--gold); color: var(--gold); }
-        .btn-icon i { font-size: 1.2rem; }
-
-        /* MODAL DETALHES */
-        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); align-items: center; justify-content: center; backdrop-filter: blur(5px); }
-        .modal-content { background: #121212; width: 90%; max-width: 500px; max-height: 90vh; border-radius: 15px; border: 1px solid var(--gold); padding: 25px; overflow-y: auto; display: flex; flex-direction: column; }
-        
-        .info-box { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 15px; }
-        .info-label { font-size: 0.65rem; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
-        .info-val { font-size: 1rem; color: white; line-height: 1.4; }
-
-        /* PDF HIDDEN */
-        #pdf-wrapper-all { position: fixed; top: 0; left: -9999px; width: 800px; z-index: -100; visibility: visible; background: white; }
-        .pdf-document { width: 800px; background-color: #ffffff !important; color: #000000 !important; padding: 40px; font-family: 'Montserrat', sans-serif; }
-        .pdf-document * { color: #000000 !important; border-color: #000000 !important; }
-        .pdf-document h1, .pdf-document h2 { color: #D4AF37 !important; font-family: 'Playfair Display', serif; }
-        .pdf-document table th { background-color: #f0f0f0 !important; }
-    </style>
+    <link rel="stylesheet" href="css/components.css">
 </head>
 <body>
     <div class="container">
@@ -66,151 +19,15 @@
             <div class="logo-text">Histórico</div>
         </nav>
 
-        <div class="search-box">
-            <i class="ph ph-magnifying-glass search-icon"></i>
-            <input type="text" id="busca" class="search-input" placeholder="Buscar por cliente ou evento..." onkeyup="filtrar()">
+        <div class="glass-panel" style="padding: 15px;">
+            <input type="text" id="busca-orcamento" placeholder="🔍 Buscar por cliente ou evento..." style="margin-bottom: 0;">
         </div>
 
-        <div id="lista-completa"><p style="text-align:center; color:#666">Carregando...</p></div>
-    </div>
-
-    <div id="modal-detalhes" class="modal">
-        <div class="modal-content">
-            <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
-                <h3 style="margin:0; font-family:'Playfair Display'; font-size:1.3rem; color:white">Detalhes</h3>
-                <button onclick="document.getElementById('modal-detalhes').style.display='none'" style="background:none; border:none; color:#fff; font-size:1.5rem;">&times;</button>
-            </div>
-            
-            <div class="info-box">
-                <div class="info-label">EVENTO</div>
-                <div class="info-val" id="d-titulo" style="font-weight:bold; font-size:1.2rem;">-</div>
-                <div class="info-val" id="d-data" style="font-size:0.9rem; color:#aaa;">-</div>
-            </div>
-
-            <div class="info-box">
-                <div class="info-label">CLIENTE</div>
-                <div class="info-val" id="d-cliente">-</div>
-                <div class="info-val" id="d-whats" style="font-size:0.9rem; color:#aaa;">-</div>
-            </div>
-            
-            <div class="info-box">
-                <div class="info-label">TOTAL</div>
-                <div class="info-val" id="d-total" style="font-family:'Playfair Display'; color:var(--gold); font-size:1.5rem;">R$ 0,00</div>
-            </div>
-
-            <div class="info-box">
-                <div class="info-label">ITENS</div>
-                <ul id="d-itens" style="padding-left:20px; margin:5px 0; color:#ccc; font-size:0.9rem;"></ul>
-            </div>
-
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                <button onclick="acaoGerarPDF(document.getElementById('d-id').value)" style="padding:12px; background:transparent; border:1px solid var(--gold); color:var(--gold); border-radius:8px; font-weight:bold; cursor:pointer;">PDF</button>
-                <button onclick="acaoEditar(document.getElementById('d-id').value)" style="padding:12px; background:var(--gold); color:black; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">EDITAR</button>
-            </div>
-            <input type="hidden" id="d-id">
+        <div id="lista-completa" style="display: flex; flex-direction: column; gap: 10px;">
+            <p style="text-align:center; color:#666">Carregando...</p>
         </div>
     </div>
 
-    <div id="pdf-wrapper-all">
-        <div id="pdf-orcamento-template" class="pdf-document">
-            <div style="border-bottom: 2px solid #D4AF37; padding-bottom: 20px; margin-bottom: 30px;"><h1 style="font-family: 'Playfair Display', serif; color: #D4AF37; margin: 0; font-size: 32px;">MIRIÃ | <span style="font-size: 18px; color: #000;">Storymaker</span></h1></div>
-            <div style="margin-bottom: 30px; color: #000;"><p><strong>Cliente:</strong> <span id="pdf-cliente-nome"></span></p><p><strong>Evento:</strong> <span id="pdf-evento-titulo"></span> (<span id="pdf-evento-data"></span>)</p></div>
-            <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px; color: #000;"><thead><tr style="background:#f0f0f0"><th style="text-align:left; padding:10px">Item</th><th style="text-align:right; padding:10px">Valor</th></tr></thead><tbody id="pdf-lista-itens"></tbody></table>
-            <div style="text-align:right; font-size:1.5em; color:#D4AF37 !important" id="pdf-total-final">R$ 0,00</div>
-        </div>
-    </div>
-
-    <script>
-        const API_URL = '/.netlify/functions';
-        let todos = [];
-
-        async function carregar() {
-            try {
-                const res = await fetch(`${API_URL}/orcamentos`); 
-                todos = await res.json();
-                renderizar(todos);
-            } catch(e) { document.getElementById('lista-completa').innerHTML = '<p style="text-align:center;color:#666">Erro.</p>'; }
-        }
-
-        function renderizar(lista) {
-            const div = document.getElementById('lista-completa'); div.innerHTML = '';
-            if(lista.length === 0) { div.innerHTML = '<p style="text-align:center; color:#666">Nada encontrado.</p>'; return; }
-            lista.forEach(orc => {
-                const valor = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(orc.valor_total_geral);
-                const data = new Date(orc.data_evento).toLocaleDateString('pt-BR');
-                
-                // Clicar no card -> Abre Detalhes
-                // Botão Editar -> Vai pra tela de edição
-                div.innerHTML += `
-                    <div class="list-item" onclick="abrirDetalhes(${orc.id})">
-                        <div class="item-info">
-                            <div class="item-title">${orc.titulo_evento}</div>
-                            <div class="item-sub"><span style="color:var(--gold)">●</span> ${data} &bull; ${orc.nome_razao_social}</div>
-                        </div>
-                        <div class="item-actions">
-                            <div class="item-price">${valor}</div>
-                            <a href="orcamentos.html?edit_id=${orc.id}" onclick="event.stopPropagation()" class="btn-icon" title="Editar"><i class="ph ph-pencil-simple"></i></a>
-                        </div>
-                    </div>`;
-            });
-        }
-
-        window.filtrar = () => {
-            const t = document.getElementById('busca').value.toLowerCase();
-            renderizar(todos.filter(o => (o.titulo_evento||"").toLowerCase().includes(t) || (o.nome_razao_social||"").toLowerCase().includes(t)));
-        }
-
-        // --- MODAL E AÇÕES ---
-        window.abrirDetalhes = async (id) => {
-            try {
-                const res = await fetch(`${API_URL}/orcamentos?id=${id}`);
-                const dados = await res.json();
-                
-                document.getElementById('d-titulo').innerText = dados.titulo_evento;
-                document.getElementById('d-data').innerText = new Date(dados.data_evento).toLocaleDateString('pt-BR');
-                document.getElementById('d-cliente').innerText = dados.nome_razao_social;
-                document.getElementById('d-whats').innerText = dados.whatsapp || "-";
-                document.getElementById('d-total').innerText = parseFloat(dados.valor_total_geral).toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
-                document.getElementById('d-id').value = dados.id;
-                
-                const ul = document.getElementById('d-itens'); ul.innerHTML = '';
-                if(dados.itens) dados.itens.forEach(i => ul.innerHTML += `<li>${i.nome_item}</li>`);
-                
-                document.getElementById('modal-detalhes').style.display = 'flex';
-            } catch(e) { alert("Erro ao carregar detalhes."); }
-        }
-
-        window.acaoEditar = (id) => { window.location.href = `orcamentos.html?edit_id=${id}`; }
-
-        window.acaoGerarPDF = async (id) => {
-            const btn = event.target; btn.innerText = "⏳";
-            try {
-                const res = await fetch(`${API_URL}/orcamentos?id=${id}`);
-                const dados = await res.json();
-                
-                document.getElementById('pdf-cliente-nome').innerText = dados.nome_razao_social;
-                document.getElementById('pdf-evento-titulo').innerText = dados.titulo_evento;
-                document.getElementById('pdf-evento-data').innerText = new Date(dados.data_evento).toLocaleDateString('pt-BR');
-                document.getElementById('pdf-total-final').innerText = dados.valor_total_geral.toLocaleString('pt-BR', {style:'currency',currency:'BRL'});
-                
-                const tbody = document.getElementById('pdf-lista-itens'); tbody.innerHTML = '';
-                if(dados.itens) dados.itens.forEach(i => tbody.innerHTML += `<tr><td style="padding:10px;border-bottom:1px solid #ccc">${i.nome_item}</td><td style="text-align:right;padding:10px;border-bottom:1px solid #ccc">${i.valor_total_item.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}</td></tr>`);
-
-                const element = document.getElementById('pdf-orcamento-template');
-                const opt = { margin: 0, filename: `Proposta.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }};
-                
-                if (navigator.canShare) {
-                    const pdfBlob = await html2pdf().set(opt).from(element).output('blob');
-                    const file = new File([pdfBlob], "Proposta.pdf", { type: "application/pdf" });
-                    await navigator.share({ files: [file] });
-                } else {
-                    await html2pdf().set(opt).from(element).save();
-                }
-            } catch(e) { alert("Erro."); }
-            btn.innerText = "PDF";
-        }
-
-        carregar();
-    </script>
+    <script type="module" src="js/pages/lista.js"></script>
 </body>
-</html> 
+</html>

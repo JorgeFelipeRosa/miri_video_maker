@@ -1,0 +1,59 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Miriã Storymaker | Dashboard</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <link rel="stylesheet" href="/css/base/variables.css">
+    <link rel="stylesheet" href="/css/base/reset.css">
+    <link rel="stylesheet" href="/css/base/global.css">
+    <link rel="stylesheet" href="/css/components/sidebar.css">
+    <link rel="stylesheet" href="/css/components/cards.css">
+    <link rel="stylesheet" href="/css/pages/dashboard.css"> 
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <div id="sidebar-container"></div>
+
+        <main class="main-content">
+            
+            <header class="header-std">
+                <div class="header-left">
+                    <button id="menu-toggle" class="btn-circle-glass"><i class="ph ph-list"></i></button>
+                    <div>
+                        <h2 class="title-std">Bom dia, Miriã</h2>
+                        <p style="font-size: 12px; color: var(--text-secondary);">Resumo do dia</p>
+                    </div>
+                </div>
+                <div class="date-display"><span>HOJE</span></div>
+            </header>
+
+            <div class="kpi-grid">
+                <div class="glass-card kpi-card">
+                    <div class="kpi-icon"><i class="ph ph-wallet"></i></div>
+                    <div class="kpi-info"><span>Faturamento Mês</span><h3>R$ 12.500</h3></div>
+                </div>
+                <div class="glass-card kpi-card">
+                    <div class="kpi-icon warning"><i class="ph ph-clock-countdown"></i></div>
+                    <div class="kpi-info"><span>Em Edição</span><h3>4 Vídeos</h3></div>
+                </div>
+                <div class="glass-card kpi-card">
+                    <div class="kpi-icon success"><i class="ph ph-chat-circle-dots"></i></div>
+                    <div class="kpi-info"><span>Orçamentos Abertos</span><h3>8 Propostas</h3></div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="/js/modules/sidebar.js"></script>
+</body>
+</html>

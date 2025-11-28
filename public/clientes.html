@@ -1,0 +1,117 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Miriã Storymaker | Clientes</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <link rel="stylesheet" href="/css/base/variables.css">
+    <link rel="stylesheet" href="/css/base/reset.css">
+    <link rel="stylesheet" href="/css/base/global.css">
+    <link rel="stylesheet" href="/css/components/sidebar.css">
+    <link rel="stylesheet" href="/css/components/buttons.css">
+    <link rel="stylesheet" href="/css/components/inputs.css">
+    <link rel="stylesheet" href="/css/pages/clientes.css"> 
+</head>
+<body>
+
+    <div class="app-container">
+        <div id="sidebar-container"></div>
+
+        <main class="main-content">
+            
+            <header class="header-std">
+                <div class="header-left">
+                    <button id="menu-toggle" class="btn-circle-glass"><i class="ph ph-list"></i></button>
+                    <div>
+                        <h2 class="title-std">Clientes</h2>
+                        <p style="font-size: 12px; color: var(--text-secondary);">Sua base de contatos</p>
+                    </div>
+                </div>
+                <button id="btnNovoCliente" class="btn-primary btn-new">
+                    <i class="ph ph-plus"></i> <span>Novo</span>
+                </button>
+            </header>
+
+            <div class="search-bar-container">
+                <div class="input-icon-wrapper">
+                    <i class="ph ph-magnifying-glass search-icon"></i>
+                    <input type="text" id="searchInput" class="input-glass search-input" placeholder="Buscar por nome, cidade...">
+                </div>
+            </div>
+
+            <div class="clients-grid" id="listaClientes">
+                </div>
+
+        </main>
+    </div>
+
+    <div class="modal-overlay" id="modalCliente">
+        <div class="modal-glass">
+            <div class="modal-header">
+                <h3>Dados do Cliente</h3>
+                <button type="button" class="btn-close-modal"><i class="ph ph-x"></i></button>
+            </div>
+            
+            <div class="editor-form" style="overflow-y: auto; padding-right: 5px;">
+                
+                <h4 class="form-subtitle">Contato</h4>
+                <div class="input-group">
+                    <label>Nome Completo / Razão Social</label>
+                    <input type="text" id="cliNome" class="input-glass">
+                </div>
+                
+                <div class="row-2-col">
+                    <div class="input-group">
+                        <label>WhatsApp</label>
+                        <input type="text" id="cliWhats" class="input-glass" placeholder="(00) 00000-0000">
+                    </div>
+                    <div class="input-group">
+                        <label>Origem</label>
+                        <select id="cliOrigem" class="input-glass">
+                            <option value="">Carregando...</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>E-mail</label>
+                    <input type="email" id="cliEmail" class="input-glass" placeholder="cliente@email.com">
+                </div>
+
+                <h4 class="form-subtitle" style="margin-top: 10px;">Fiscal & Endereço</h4>
+                
+                <div class="input-group">
+                    <label>CPF / CNPJ</label>
+                    <input type="text" id="cliCpf" class="input-glass">
+                </div>
+
+                <div class="row-2-col">
+                    <div class="input-group"><label>CEP</label><input type="text" id="cliCep" class="input-glass"></div>
+                    <div class="input-group"><label>Cidade</label><input type="text" id="cliCidade" class="input-glass"></div>
+                </div>
+
+                <div class="input-group">
+                    <label>Endereço</label>
+                    <input type="text" id="cliRua" class="input-glass">
+                </div>
+
+                <div class="row-2-col">
+                    <div class="input-group"><label>Número</label><input type="text" id="cliNum" class="input-glass"></div>
+                    <div class="input-group"><label>Bairro</label><input type="text" id="cliBairro" class="input-glass"></div>
+                </div>
+                
+                <div class="input-group"><label>Estado (UF)</label><input type="text" id="cliUf" class="input-glass" maxlength="2"></div>
+
+                <button id="btnSalvarCliente" class="btn-primary" style="margin-top: 20px;">SALVAR DADOS</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/modules/sidebar.js"></script>
+    <script src="/js/pages/clientes.js"></script> 
+</body>
+</html>

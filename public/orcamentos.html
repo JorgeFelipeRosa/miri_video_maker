@@ -3,375 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Orçamentos | Miriã</title>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-    
+    <title>Miriã Storymaker | Orçamentos</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <link rel="stylesheet" href="css/global.css">
 
-    <style>
-        /* AJUSTES ESPECÍFICOS DE LAYOUT */
-        body { padding-bottom: 150px; } /* Espaço extra para o footer não cobrir */
-
-        .secao-calc { 
-            background: var(--bg-panel); 
-            padding: 20px; 
-            margin-bottom: 20px; 
-            border-radius: 16px; 
-            border: 1px solid rgba(255,255,255,0.08); 
-        }
-
-        /* Correção das Datas para Mobile */
-        .date-row { display: flex; flex-direction: column; gap: 15px; }
-        @media(min-width: 480px) { .date-row { flex-direction: row; } }
-
-        /* Correção da Lista de Serviços */
-        .item-check { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .item-check label { display: flex; align-items: center; gap: 12px; width: 60%; margin: 0; cursor: pointer; }
-        .price-input { width: 90px !important; text-align: right; background: transparent !important; border: none !important; color: var(--gold) !important; font-weight: 700; padding: 0 !important; margin: 0 !important; }
-
-        /* Área do PDF (Escondida corretamente) */
-        #pdf-wrapper-all {
-            position: fixed;
-            top: 0;
-            left: -9999px; /* Fora da tela */
-            width: 800px;
-            z-index: -100;
-            visibility: visible;
-            background: white; /* Fundo branco garantido */
-        }
-        
-        .pdf-document {
-            width: 800px;
-            background-color: #ffffff !important;
-            color: #000000 !important;
-            padding: 40px;
-            font-family: 'Montserrat', sans-serif;
-        }
-        
-        /* Forçar preto no branco para o PDF */
-        .pdf-document * { color: #000000 !important; border-color: #000000 !important; }
-        .pdf-document h1, .pdf-document h2 { color: #D4AF37 !important; font-family: 'Playfair Display', serif; }
-        .pdf-document table th { background-color: #f0f0f0 !important; }
-
-        /* Footer Fixo */
-        .resumo-flutuante {
-            position: fixed; bottom: 0; left: 0; width: 100%;
-            background: #0a0a0a; padding: 15px 20px;
-            border-top: 1px solid var(--gold);
-            display: flex; justify-content: space-between; align-items: center;
-            z-index: 999;
-        }
-    </style>
+    <link rel="stylesheet" href="/css/base/variables.css">
+    <link rel="stylesheet" href="/css/base/reset.css">
+    <link rel="stylesheet" href="/css/base/global.css">
+    <link rel="stylesheet" href="/css/components/sidebar.css">
+    <link rel="stylesheet" href="/css/components/buttons.css">
+    <link rel="stylesheet" href="/css/components/inputs.css">
+    <link rel="stylesheet" href="/css/pages/orcamentos.css"> 
 </head>
 <body>
-    <div class="container">
-        <nav>
-            <a href="index.html" class="nav-link"><i class="ph ph-arrow-left"></i> Voltar</a>
-            <div class="logo-text">Orçamento</div>
-        </nav>
 
-        <form id="form-orcamento">
-            <input type="hidden" id="id_orcamento_editando">
-
-            <div id="header-edicao" style="display: none; text-align: center; margin-bottom: 15px; background: rgba(212, 175, 55, 0.1); padding: 10px; border-radius: 8px;">
-                <span style="color: var(--gold); font-weight: bold;">MODO EDIÇÃO</span>
-                <button type="button" onclick="cancelarEdicao()" style="background: none; border: none; color: var(--danger-red); text-decoration: underline; margin-left: 10px; cursor: pointer;">Cancelar</button>
-            </div>
-            
-            <div class="secao-calc">
-                <h3><i class="ph ph-user"></i> Cliente</h3>
-                <div class="tabs">
-                    <button type="button" class="tab-btn active" onclick="mudarAba('novo')">Novo Lead</button>
-                    <button type="button" class="tab-btn" onclick="mudarAba('existente')">Cadastrado</button>
-                </div>
-                
-                <div id="area-novo">
-                    <div style="display: flex; gap: 10px;">
-                        <div style="flex: 2;"><label>Nome</label><input type="text" id="novo_nome" placeholder="Ex: Maria"></div>
-                        <div style="flex: 1;"><label>Whats</label><input type="text" id="novo_whats" placeholder="(DDD)..."></div>
-                    </div>
-                </div>
-
-                <div id="area-existente" style="display: none;">
-                    <label>Selecione</label>
-                    <div style="display: flex; gap: 5px;">
-                        <select id="cliente_select" style="flex-grow:1"><option value="">Carregando...</option></select>
-                        <button type="button" class="search-trigger" onclick="abrirModalCliente()"><i class="ph ph-magnifying-glass"></i></button>
-                    </div>
-                </div>
-
-                <label>Evento</label><input type="text" id="titulo" placeholder="Ex: Casamento Maria" required>
-                
-                <div class="date-row">
-                    <div style="flex: 1;"><label>Data do Evento</label><input type="date" id="data" required></div>
-                    <div style="flex: 1;"><label>Validade Proposta</label><input type="date" id="validade" required></div>
-                </div>
-            </div>
-
-            <div class="secao-calc">
-                <h3><span><i class="ph ph-camera"></i> Serviços</span><button type="button" class="search-trigger" onclick="abrirModalServico()"><i class="ph ph-plus"></i></button></h3>
-                <div id="lista-servicos-check"><p style="text-align:center; color:#888; padding:10px;">Nenhum serviço.</p></div>
-            </div>
-
-            <div class="secao-calc">
-                <h3><i class="ph ph-map-pin"></i> Logística</h3>
-                <label>Local</label><input type="text" id="local" placeholder="Local...">
-                <div style="display: flex; gap: 10px;">
-                    <div style="flex:1"><label>Distância (Ida)</label><input type="number" id="distancia" value="0" oninput="calcularTotal()"></div>
-                    <div style="flex:1"><label>Custo/KM</label><input type="number" id="custo_km" value="1.00" step="0.10" oninput="calcularTotal()"></div>
-                </div>
-                <label>Extras (R$)</label><input type="number" id="custo_extra" value="50.00" oninput="calcularTotal()">
-            </div>
-
-            <div class="secao-calc"><h3><i class="ph ph-note-pencil"></i> Obs</h3><textarea id="observacoes" rows="2"></textarea></div>
-
-            <div style="display: flex; gap: 10px; margin-bottom: 30px;">
-                <button type="button" onclick="gerarPDF()" class="btn-secondary">PRÉVIA PDF</button>
-                <button type="submit" id="btn-salvar" class="btn-primary">SALVAR</button>
-            </div>
-        </form>
-
-        <h3 style="margin-top: 30px; color:#888; border-bottom: 1px solid #333; padding-bottom: 10px;">Recentes</h3>
-        <div id="lista-historico"></div>
+    <div class="app-container">
         
-        <div style="text-align: center; margin-top: 20px;">
-            <a href="lista-orcamentos.html" style="color: var(--gold); font-size: 0.9rem; text-decoration: underline;">Ver Histórico Completo</a>
-        </div>
+        <div id="sidebar-container"></div>
+
+        <main class="main-content">
+            <header class="page-header">
+                <div class="header-left">
+                    <button class="hamburger-menu" id="menuToggle"><i class="ph ph-list"></i></button>
+                    <a href="dashboard.html" class="btn-icon-back"><i class="ph ph-arrow-left"></i></a>
+                    <h2>Orçamentos</h2>
+                </div>
+                <a href="editor-orcamento.html" class="btn-primary btn-new"><i class="ph ph-plus"></i> <span>Novo</span></a>
+            </header>
+
+            <div class="search-bar-container">
+                <div class="input-icon-wrapper">
+                    <i class="ph ph-magnifying-glass search-icon"></i>
+                    <input type="text" id="searchInput" class="input-glass search-input" placeholder="Buscar cliente, evento...">
+                </div>
+            </div>
+
+            <div class="filters-bar">
+                <button class="filter-tab active" data-filter="all">Todos</button>
+                <button class="filter-tab" data-filter="1">Rascunhos</button>
+                <button class="filter-tab" data-filter="2">Enviados</button>
+                <button class="filter-tab" data-filter="3">Fechados</button>
+            </div>
+
+            <div class="quotes-list" id="listaOrcamentos"></div>
+        </main>
     </div>
 
-    <div class="resumo-flutuante">
-        <div><small style="color:#888;">TOTAL</small><br><strong style="font-size: 1.4rem; color: var(--gold); font-family: 'Playfair Display';" id="total-geral">R$ 0,00</strong></div>
-        <div style="text-align: right; font-size: 0.8rem; color: #888;">Serv: <span id="total-servicos" style="color:#fff">0,00</span><br>Log: <span id="total-logistica" style="color:#fff">0,00</span></div>
-    </div>
-
-    <div id="modal-cliente" class="modal"><div class="modal-content"><div style="display:flex;justify-content:space-between;margin-bottom:15px;"><h3 style="margin:0">Buscar Cliente</h3><button onclick="document.getElementById('modal-cliente').style.display='none'" style="background:none;border:none;color:#aaa;font-size:1.5rem;">&times;</button></div><input type="text" id="search-cliente" placeholder="Nome..." onkeyup="filtrarClientes()"><div id="results-cliente"></div></div></div>
-    <div id="modal-servico" class="modal"><div class="modal-content"><div style="display:flex;justify-content:space-between;margin-bottom:15px;"><h3 style="margin:0">Buscar Pacote</h3><button onclick="document.getElementById('modal-servico').style.display='none'" style="background:none;border:none;color:#aaa;font-size:1.5rem;">&times;</button></div><input type="text" id="search-servico" placeholder="Nome..." onkeyup="filtrarServicos()"><div id="results-servico"></div></div></div>
-
-    <div id="modal-fechamento" class="modal">
-        <div class="modal-content">
-            <h3 style="color:var(--gold); margin-top:0;">Fechar Contrato</h3>
-            <form id="form-fechamento">
-                <input type="hidden" id="fc_id_orcamento"><input type="hidden" id="fc_id_cliente">
-                <label style="color:var(--gold)">Dados</label>
-                <div style="display:flex;gap:10px"><div style="flex:1"><label>Nome</label><input type="text" id="fc_nome" required></div><div style="flex:1"><label>CPF</label><input type="text" id="fc_cpf"></div></div>
-                <div style="display:flex;gap:10px"><div style="flex:1"><label>Email</label><input type="email" id="fc_email"></div><div style="flex:1"><label>Whats</label><input type="text" id="fc_whats"></div></div>
-                <label style="color:var(--gold);margin-top:10px;">Endereço</label>
-                <div style="display:flex;gap:10px"><div style="flex:1"><label>CEP</label><input type="text" id="fc_cep" onblur="buscarCep(this.value)"></div><div style="flex:2"><label>Rua</label><input type="text" id="fc_logradouro"></div><div style="flex:1"><label>Nº</label><input type="text" id="fc_numero"></div></div>
-                <div style="display:flex;gap:10px"><div style="flex:2"><label>Bairro</label><input type="text" id="fc_bairro"></div><div style="flex:2"><label>Cidade</label><input type="text" id="fc_cidade"></div><div style="flex:1"><label>UF</label><input type="text" id="fc_uf"></div></div>
-                <div style="background:rgba(212,175,55,0.1);padding:15px;border-radius:8px;margin-top:15px;border:1px solid var(--gold);"><label style="color:var(--gold)">💰 Sinal (R$)</label><input type="number" id="fc_entrada" placeholder="0,00" step="0.01" style="margin-bottom:0;"></div>
-                <div style="display:flex;gap:10px;margin-top:20px;"><button type="button" onclick="document.getElementById('modal-fechamento').style.display='none'" class="btn-secondary">Cancelar</button><button type="submit" class="btn-primary">GERAR</button></div>
-            </form>
-        </div>
-    </div>
-
-    <div id="pdf-wrapper-all">
-        <div id="pdf-orcamento-template" class="pdf-document">
-            <div style="border-bottom:2px solid #D4AF37;padding-bottom:20px;margin-bottom:30px;"><h1 style="font-family:'Playfair Display';color:#D4AF37;margin:0;">MIRIÃ | <span style="font-size:18px;color:#000;">Storymaker</span></h1></div>
-            <div style="margin-bottom:30px;color:#000;"><p><strong>Cliente:</strong> <span id="pdf-cliente-nome">-</span></p><p><strong>Evento:</strong> <span id="pdf-evento-titulo">-</span></p></div>
-            <table style="width:100%;border-collapse:collapse;margin-bottom:30px;color:#000;"><thead><tr style="background:#f0f0f0"><th style="text-align:left;padding:10px">Item</th><th style="text-align:right;padding:10px">Valor</th></tr></thead><tbody id="pdf-lista-itens"></tbody></table>
-            <div style="text-align:right;font-size:1.5em;color:#D4AF37!important" id="pdf-total-final">R$ 0,00</div>
-        </div>
-        <div id="pdf-contrato-template" class="pdf-document" style="margin-top:50px; font-family:'Times New Roman';">
-            <div style="text-align:center;margin-bottom:40px;"><h1 style="font-size:24px;color:#000!important">CONTRATO</h1></div>
-            <p style="color:#000">CONTRATANTE: <strong id="ct-nome"></strong>, CPF <span id="ct-cpf"></span>.</p>
-            <p style="color:#000">OBJETO: <strong id="ct-evento"></strong> em <span id="ct-data"></span>.</p>
-            <p style="color:#000">VALOR: <strong id="ct-valor"></strong>.</p>
-        </div>
-    </div>
-
-    <script type="module">
-        const API_URL = '/.netlify/functions';
-        let servicosDisponiveis = [];
-        let clientesDisponiveis = [];
-        let itensOrcamento = []; 
-
-        // Inicialização
-        const hoje = new Date(); const validade = new Date(hoje); validade.setDate(hoje.getDate() + 15);
-        document.getElementById('data').valueAsDate = hoje; document.getElementById('validade').valueAsDate = validade;
-
-        window.mudarAba = function(tipo) {
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(tipo==='novo'?'area-novo':'area-existente').style.display='block';
-            document.getElementById(tipo==='novo'?'area-existente':'area-novo').style.display='none';
-            document.querySelector(`button[onclick="mudarAba('${tipo}')"]`).classList.add('active');
-            if(tipo==='novo') { document.getElementById('cliente_select').value=""; } 
-            else { document.getElementById('novo_nome').value=""; }
-        }
-
-        async function init() {
-            try {
-                const [resCli, resServ] = await Promise.all([fetch(`${API_URL}/clientes`), fetch(`${API_URL}/servicos`)]);
-                clientesDisponiveis = await resCli.json(); servicosDisponiveis = await resServ.json();
-                const select = document.getElementById('cliente_select'); select.innerHTML = '<option value="">Selecione...</option>';
-                if(Array.isArray(clientesDisponiveis)) clientesDisponiveis.forEach(c => select.innerHTML += `<option value="${c.id}">${c.nome_razao_social}</option>`);
-                carregarHistorico();
-            } catch(e) {}
-        }
-
-        // Funções de Lupa
-        window.abrirModalCliente = () => { document.getElementById('modal-cliente').style.display='flex'; document.getElementById('search-cliente').focus(); filtrarClientes(); }
-        window.filtrarClientes = () => { const t=document.getElementById('search-cliente').value.toLowerCase(); const div=document.getElementById('results-cliente'); div.innerHTML=''; clientesDisponiveis.filter(c=>c.nome_razao_social.toLowerCase().includes(t)).forEach(c=>{ div.innerHTML+=`<div class="result-item" onclick="selecionarCliente('${c.id}')">${c.nome_razao_social}</div>` }); }
-        window.selecionarCliente = (id) => { document.getElementById('cliente_select').value=id; document.getElementById('modal-cliente').style.display='none'; }
-
-        window.abrirModalServico = () => { document.getElementById('modal-servico').style.display='flex'; document.getElementById('search-servico').focus(); filtrarServicos(); }
-        window.filtrarServicos = () => { const t=document.getElementById('search-servico').value.toLowerCase(); const div=document.getElementById('results-servico'); div.innerHTML=''; servicosDisponiveis.filter(s=>s.nome.toLowerCase().includes(t)).forEach(s=>{ const idx=servicosDisponiveis.findIndex(x=>x.id===s.id); div.innerHTML+=`<div class="result-item" onclick="adicionarItem(${idx})"><span>${s.nome}</span> <span style="color:var(--gold)">R$ ${s.preco_base}</span></div>` }); }
-
-        // Itens
-        window.adicionarItem = (index) => {
-            const s = servicosDisponiveis[index];
-            itensOrcamento.push({ id: s.id, nome: s.nome, desc: s.descricao_tecnica, preco: s.preco_base });
-            renderizarItens();
-            document.getElementById('modal-servico').style.display='none';
-        }
-        window.removerItem = (idx) => { itensOrcamento.splice(idx,1); renderizarItens(); }
-        window.atualizarPreco = (idx, val) => { itensOrcamento[idx].preco = parseFloat(val)||0; calcularTotal(); }
-
-        function renderizarItens() {
-            const div = document.getElementById('lista-servicos-check'); div.innerHTML = '';
-            if(itensOrcamento.length === 0) { div.innerHTML = '<p style="color:#888;text-align:center;padding:20px;">Nenhum serviço.</p>'; return; }
-            itensOrcamento.forEach((item, idx) => {
-                div.innerHTML += `<div class="item-check"><label style="width:60%"><div><div style="font-weight:600">${item.nome}</div><div style="font-size:0.8em;color:#888">${item.desc||''}</div></div></label><div style="width:40%;display:flex;align-items:center;gap:5px;justify-content:flex-end;"><span style="color:var(--gold);font-size:0.8em">R$</span><input type="number" value="${item.preco}" step="0.01" oninput="atualizarPreco(${idx}, this.value)" class="price-input"><button onclick="removerItem(${idx})" style="background:none;border:none;color:#666;cursor:pointer;font-size:1.2rem;">&times;</button></div></div>`;
-            });
-            calcularTotal();
-        }
-
-        window.calcularTotal = function() {
-            let somaServicos = itensOrcamento.reduce((acc, i) => acc + i.preco, 0);
-            const km = parseFloat(document.getElementById('distancia').value)||0;
-            const custoKm = parseFloat(document.getElementById('custo_km').value)||0;
-            const extra = parseFloat(document.getElementById('custo_extra').value)||0;
-            const somaLogistica = (km*2*custoKm) + extra;
-            const total = somaServicos + somaLogistica;
-            document.getElementById('total-servicos').innerText = somaServicos.toLocaleString('pt-BR', {style:'currency',currency:'BRL'});
-            document.getElementById('total-logistica').innerText = somaLogistica.toLocaleString('pt-BR', {style:'currency',currency:'BRL'});
-            document.getElementById('total-geral').innerText = total.toLocaleString('pt-BR', {style:'currency',currency:'BRL'});
-            return { somaServicos, somaLogistica, total };
-        }
-
-        function montarObjetoDados() {
-            const totais = calcularTotal();
-            return {
-                id_orcamento: document.getElementById('id_orcamento_editando').value || null,
-                cliente_id: document.getElementById('cliente_select').value || null,
-                cliente_nome_rapido: document.getElementById('novo_nome').value,
-                cliente_whats_rapido: document.getElementById('novo_whats').value,
-                titulo: document.getElementById('titulo').value,
-                data: document.getElementById('data').value,
-                validade: document.getElementById('validade').value,
-                local: document.getElementById('local').value,
-                distancia: document.getElementById('distancia').value,
-                custo_km: document.getElementById('custo_km').value,
-                custo_extra: document.getElementById('custo_extra').value,
-                observacoes: document.getElementById('observacoes').value,
-                itens_selecionados: itensOrcamento,
-                custo_logistica: totais.somaLogistica,
-                total_geral: totais.total
-            };
-        }
-
-        // GERAR PDF (Lógica Interna)
-        window.gerarPDF = async function(dadosExternos = null) {
-            const dados = dadosExternos || montarObjetoDados();
-            const nomeCliente = dados.cliente_id ? document.getElementById('cliente_select').selectedOptions[0].text : (dados.cliente_nome_rapido || "Cliente");
-            
-            document.getElementById('pdf-cliente-nome').innerText = nomeCliente;
-            document.getElementById('pdf-evento-titulo').innerText = dados.titulo;
-            document.getElementById('pdf-total-final').innerText = dados.total_geral.toLocaleString('pt-BR', {style:'currency',currency:'BRL'});
-            
-            const tbody = document.getElementById('pdf-lista-itens'); tbody.innerHTML = '';
-            const lista = dados.itens || dados.itens_selecionados || [];
-            lista.forEach(item => {
-                const val = item.valor_total_item !== undefined ? item.valor_total_item : item.preco;
-                tbody.innerHTML += `<tr><td style="padding:10px;border-bottom:1px solid #ccc">${item.nome || item.nome_item}</td><td style="text-align:right;padding:10px;border-bottom:1px solid #ccc">${val.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}</td></tr>`;
-            });
-
-            const element = document.getElementById('pdf-orcamento-template');
-            const opt = { margin: 0, filename: `Proposta.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } };
-            
-            if(navigator.canShare && navigator.maxTouchPoints > 0) {
-                const pdfBlob = await html2pdf().set(opt).from(element).output('blob');
-                const file = new File([pdfBlob], "Proposta.pdf", { type: "application/pdf" });
-                try { await navigator.share({ files: [file] }); } catch(e){}
-            } else {
-                html2pdf().set(opt).from(element).save();
-            }
-        }
-
-        window.gerarContratoPDF = async function(nome, cpf, endereco, evento, data, valor) {
-            document.getElementById('ct-nome').innerText = nome; document.getElementById('ct-cpf').innerText = cpf||""; document.getElementById('ct-endereco').innerText = endereco; document.getElementById('ct-evento').innerText = evento; document.getElementById('ct-data').innerText = new Date(data).toLocaleDateString('pt-BR'); document.getElementById('ct-valor').innerText = valor.toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
-            const element = document.getElementById('pdf-contrato-template');
-            const opt = { margin: 15, filename: `Contrato.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } };
-            if(navigator.canShare && navigator.maxTouchPoints > 0) { const pdfBlob = await html2pdf().set(opt).from(element).output('blob'); const file = new File([pdfBlob], "Contrato.pdf", { type: "application/pdf" }); try { await navigator.share({ files: [file] }); } catch(e){} } else { html2pdf().set(opt).from(element).save(); }
-        }
-
-        // SALVAR
-        document.getElementById('form-orcamento').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('btn-salvar'); btn.innerText = "Salvando..."; btn.disabled = true;
-            const dados = montarObjetoDados();
-            const metodo = dados.id_orcamento ? 'PUT' : 'POST';
-            try {
-                const res = await fetch(`${API_URL}/orcamentos`, { method: metodo, body: JSON.stringify(dados) });
-                if(res.ok) { if(confirm("Salvo! Gerar PDF?")) await gerarPDF(dados); window.location.reload(); } 
-                else { alert("Erro ao salvar"); }
-            } catch(err) { alert("Erro conexão"); }
-            btn.disabled = false;
-        });
-
-        // EDITAR
-        window.editarOrcamento = async function(id) {
-            const res = await fetch(`${API_URL}/orcamentos?id=${id}`); const dados = await res.json();
-            document.getElementById('id_orcamento_editando').value = dados.id;
-            document.getElementById('header-edicao').style.display='block';
-            document.getElementById('btn-salvar').innerText='ATUALIZAR';
-            
-            if(dados.id_cliente) { mudarAba('existente'); document.getElementById('cliente_select').value=dados.id_cliente; } 
-            else { mudarAba('novo'); document.getElementById('novo_nome').value=dados.nome_razao_social; }
-            
-            document.getElementById('titulo').value=dados.titulo_evento;
-            document.getElementById('data').value=dados.data_evento.split('T')[0];
-            document.getElementById('distancia').value=dados.distancia_km;
-            document.getElementById('custo_km').value=dados.custo_km_aplicado;
-            document.getElementById('custo_extra').value=(dados.valor_total_logistica - (dados.distancia_km*2*dados.custo_km_aplicado)).toFixed(2);
-            
-            // Carrega Itens Locais
-            itensOrcamento = dados.itens.map(i => ({ id: i.id_servico_catalogo, nome: i.nome_item, preco: i.valor_total_item }));
-            renderizarItens();
-            window.scrollTo({top:0, behavior:'smooth'});
-        }
-        window.cancelarEdicao = function() { window.location.reload(); }
-
-        // HISTORICO
-        async function carregarHistorico() {
-            try {
-                const res = await fetch(`${API_URL}/orcamentos?limit=5`); const lista = await res.json();
-                const div = document.getElementById('lista-historico'); div.innerHTML = '';
-                lista.forEach(orc => {
-                    const valor = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(orc.valor_total_geral);
-                    const btnCheck = orc.id_status === 3 ? '' : `<button class="btn-icon" onclick="aprovarOrcamento(${orc.id})" style="color:var(--success-green);border-color:var(--success-green)"><i class="ph ph-check"></i></button>`;
-                    div.innerHTML += `<div class="history-item"><div class="h-info"><div class="h-title">${orc.titulo_evento}</div><div class="h-sub">${orc.nome_razao_social}</div></div><div class="h-actions"><div class="h-price">${valor}</div>${btnCheck}<button class="btn-icon" onclick="window.reimprimirPDF(${orc.id})"><i class="ph ph-file-pdf"></i></button><button class="btn-icon" onclick="editarOrcamento(${orc.id})"><i class="ph ph-pencil-simple"></i></button></div></div>`;
-                });
-            } catch(e) {}
-        }
-        window.reimprimirPDF = async (id) => { const d = await (await fetch(`${API_URL}/orcamentos?id=${id}`)).json(); await gerarPDF(d); }
-
-        // APROVAR
-        window.aprovarOrcamento = async function(id) {
-            const orc = await (await fetch(`${API_URL}/orcamentos?id=${id}`)).json();
-            const cli = await (await fetch(`${API_URL}/clientes?id=${orc.id_cliente}`)).json();
-            document.getElementById('fc_id_orcamento').value = orc.id; document.getElementById('fc_id_cliente').value = orc.id_cliente;
-            document.getElementById('fc_nome').value = cli.nome_razao_social||""; document.getElementById('fc_cpf').value = cli.cpf_cnpj||""; document.getElementById('fc_email').value = cli.email||""; document.getElementById('fc_whats').value = cli.whatsapp||""; document.getElementById('fc_cep').value = cli.cep||""; document.getElementById('fc_logradouro').value = cli.logradouro||""; document.getElementById('fc_numero').value = cli.numero||""; document.getElementById('fc_bairro').value = cli.bairro||""; document.getElementById('fc_cidade').value = cli.cidade||""; document.getElementById('fc_uf').value = cli.uf||"";
-            document.getElementById('modal-fechamento').style.display = 'flex';
-        }
-        window.buscarCep = async (cep) => { cep=cep.replace(/\D/g,''); if(cep.length!==8)return; const d=await(await fetch(`https://viacep.com.br/ws/${cep}/json/`)).json(); if(!d.erro){ document.getElementById('fc_logradouro').value=d.logradouro; document.getElementById('fc_bairro').value=d.bairro; document.getElementById('fc_cidade').value=d.localidade; document.getElementById('fc_uf').value=d.uf; } }
-        document.getElementById('form-fechamento').addEventListener('submit', async (e) => { e.preventDefault(); const dCli={id:document.getElementById('fc_id_cliente').value, nome:document.getElementById('fc_nome').value, cpf:document.getElementById('fc_cpf').value, email:document.getElementById('fc_email').value, whatsapp:document.getElementById('fc_whats').value, cep:document.getElementById('fc_cep').value, logradouro:document.getElementById('fc_logradouro').value, numero:document.getElementById('fc_numero').value, bairro:document.getElementById('fc_bairro').value, cidade:document.getElementById('fc_cidade').value, uf:document.getElementById('fc_uf').value}; await fetch(`${API_URL}/clientes`, {method:'PUT', body:JSON.stringify(dCli)}); const res = await fetch(`${API_URL}/pedidos`, {method:'POST', body:JSON.stringify({id_orcamento:document.getElementById('fc_id_orcamento').value, valor_entrada:document.getElementById('fc_entrada').value||0})}); if(res.ok){ const orc = await (await fetch(`${API_URL}/orcamentos?id=${document.getElementById('fc_id_orcamento').value}`)).json(); await gerarContratoPDF(dCli.nome, dCli.cpf, dCli.logradouro, orc.titulo_evento, orc.data_evento, orc.valor_total_geral); alert("Contrato!"); window.location.href='pedidos.html'; } });
-
-        init();
-    </script>
+    <script src="/js/modules/sidebar.js"></script>
+    <script src="/js/pages/orcamentos.js"></script> 
 </body>
 </html>
