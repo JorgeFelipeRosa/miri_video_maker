@@ -1,3 +1,7 @@
-﻿
+# Variáveis de ambiente (nunca versionar)
+.env
+.env.*
+!.env.example
+
 # Local Netlify folder
 .netlify
