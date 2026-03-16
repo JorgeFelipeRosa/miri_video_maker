@@ -1,17 +1,10 @@
-﻿/* public/css/pages/editor.css - VERSÃO FINAL CORRIGIDA */
+/* public/css/pages/editor.css - VERSÃO FINAL CORRIGIDA */
 
 /* =========================================
    1. LAYOUT GERAL
    ========================================= */
 .main-content {
-    flex: 1;
-    height: 100vh;
-    overflow-y: auto; 
-    padding: var(--spacing-lg);
-    padding-bottom: 200px !important; 
-    width: 100%;
-    max-width: 800px;
-    margin: 0 auto;
+    padding-bottom: 200px !important;
 }
 
 /* Ajuste para o Header Padrão */
@@ -30,8 +23,8 @@
    2. CARDS E INPUTS
    ========================================= */
 .form-section {
-    background: linear-gradient(145deg, rgba(30,30,30,1) 0%, rgba(10,10,10,1) 100%);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
     border-radius: 20px;
     padding: 24px;
     position: relative;
@@ -46,7 +39,7 @@
     gap: 8px;
     border-bottom: 1px solid var(--glass-border);
     padding-bottom: 8px;
-    font-family: 'Cinzel', serif;
+    font-family: var(--font-display);
 }
 
 .row-2-col {
@@ -59,7 +52,7 @@
 .input-with-action { display: flex; gap: 8px; }
 
 .btn-search {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(184, 134, 11, 0.1);
     color: var(--gold-400);
     border: 1px solid var(--glass-border);
     width: 48px;
@@ -73,7 +66,7 @@
 }
 .btn-search:hover {
     background: var(--gold-400);
-    color: var(--bg-dark);
+    color: #fff;
 }
 
 /* =========================================
@@ -85,7 +78,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: rgba(0, 0, 0, 0.3);
+    background: rgba(255, 255, 255, 0.7);
     padding: 12px 16px;
     border-radius: var(--radius-sm);
     border: 1px solid var(--glass-border);
@@ -108,89 +101,33 @@
 .btn-remove { color: var(--danger); opacity: 0.6; padding: 8px; cursor: pointer; }
 
 /* =========================================
-   4. RODAPÉ FIXO
+   4. RODAPÉ FIXO (alinhado com o editor)
    ========================================= */
 .floating-footer {
     position: fixed;
     bottom: 20px;
-    left: 0; right: 0;
+    left: 50%;
+    transform: translateX(-50%);
     width: calc(100% - 40px);
-    max-width: 800px;
-    margin: 0 auto;
+    max-width: var(--content-max-width);
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
+    gap: var(--spacing-xl);
     padding: 16px 24px;
-    background: rgba(15, 15, 16, 0.95);
+    background: var(--glass-bg);
     z-index: 500;
-    border: 1px solid var(--gold-700);
+    border: 1px solid var(--glass-border);
     border-radius: var(--radius-md);
-    box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
+    box-shadow: var(--shadow-luxury);
 }
 
-.total-info h3 { color: #fff; font-size: 1.5rem; font-family: 'Cinzel', serif; }
+.total-info { text-align: center; }
+.total-info small { display: block; color: var(--text-secondary); font-size: var(--text-xs); margin-bottom: 2px; }
+.total-info h3 { color: var(--text-primary); font-size: 1.5rem; font-family: var(--font-display); margin: 0; }
 .floating-footer .btn-save { width: auto !important; padding: 12px 30px; }
 
-/* =========================================
-   5. MODAIS (CORREÇÃO DO TAMANHO E BOTÃO X)
-   ========================================= */
-.modal-overlay {
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(5px);
-    z-index: 9999;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-}
-.modal-overlay.active { display: flex; }
-
-.modal-glass {
-    width: 100%;
-    max-width: 500px;
-    background: #151516;
-    border: 1px solid var(--gold-400);
-    border-radius: var(--radius-md);
-    padding: var(--spacing-xl);
-    /* Importante para rolagem interna: */
-    display: flex;
-    flex-direction: column;
-    max-height: 80vh; 
-}
-
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid var(--glass-border);
-}
-
-.modal-header h3 {
-    font-family: 'Cinzel', serif;
-    color: var(--gold-400);
-    font-size: 1.2rem;
-    margin: 0;
-}
-
-/* O BOTÃO X CORRIGIDO */
-.modal-header .btn-close-modal {
-    background: transparent;
-    border: none;
-    color: var(--text-secondary);
-    font-size: 1.5rem;
-    cursor: pointer;
-    padding: 8px;
-    line-height: 1;
-    transition: 0.2s;
-}
-.modal-header .btn-close-modal:hover {
-    color: var(--danger);
-    transform: scale(1.1);
-}
+/* Editor: modais usam components/modal.css e buttons.css */
 
 .search-results {
     margin-top: 10px;
@@ -208,24 +145,24 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 16px; /* Mais gordinho */
-    background: rgba(255,255,255,0.05);
+    padding: 16px;
+    background: rgba(255,255,255,0.6);
     border-radius: 8px;
     cursor: pointer;
     border: 1px solid transparent;
     transition: 0.2s;
 }
 .result-item:hover {
-    background: rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.9);
     border-color: var(--gold-400);
 }
 
-.result-item strong { display: block; color: #fff; font-size: 1rem; }
+.result-item strong { display: block; color: var(--text-primary); font-size: 1rem; }
 .result-item small { color: var(--text-secondary); font-size: 0.8rem; }
 
 .btn-add-result {
     background: var(--gold-400);
-    color: #000;
+    color: #fff;
     padding: 6px 12px;
     border-radius: 4px;
     font-size: 0.75rem;
@@ -281,7 +218,16 @@
 .pdf-footer { margin-top: 60px; text-align: center; color: #555; font-size: 10px; }
 .pdf-signature p { color: #D4AF37; font-family: 'Cinzel', serif; font-size: 16px; margin-bottom: 4px; }
 
-@media (min-width: 1024px) { .floating-footer { left: 300px; width: calc(100% - 340px); } }
+/* PC: rodapé na mesma coluna do editor (sidebar 280px + padding) */
+@media (min-width: 769px) {
+    .floating-footer {
+        left: calc(280px + var(--spacing-xl));
+        right: auto;
+        transform: none;
+        width: calc(100vw - 280px - var(--spacing-xl) * 2);
+        max-width: var(--content-max-width);
+    }
+}
 @media (max-width: 768px) { 
     .editor-header { margin-top: 60px; }
     .modal-glass { max-height: 90vh; } /* Modal mais alto no celular */

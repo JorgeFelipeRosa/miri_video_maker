@@ -1,15 +1,38 @@
-﻿/* netlify/functions/manage_clients.js */
-const { createClient } = require("@libsql/client");
-
-const client = createClient({
-  url: process.env.TURSO_DATABASE_URL,
-  authToken: process.env.TURSO_AUTH_TOKEN,
-});
+/* netlify/functions/manage_clients.js */
+const client = require("./_shared/_db.js");
 
 exports.handler = async function(event) {
   try {
-    // GET: LISTAR CLIENTES
+    // GET: LISTAR CLIENTES, BUSCAR POR ID ou VERIFICAR DUPLICADO (email/whatsapp)
     if (event.httpMethod === "GET") {
+      const q = event.queryStringParameters || {};
+      const id = q.id;
+      const email = (q.email || "").trim();
+      const whatsapp = (q.whatsapp || "").trim().replace(/\D/g, "");
+
+      if (id) {
+        const result = await client.execute({
+          sql: "SELECT * FROM clientes WHERE id = ? AND ativo = 1",
+          args: [id]
+        });
+        const row = result.rows[0] || null;
+        return { statusCode: 200, body: JSON.stringify(row) };
+      }
+
+      if (email || whatsapp) {
+        const conditions = [];
+        const args = [];
+        if (email) { conditions.push("email = ?"); args.push(email); }
+        if (whatsapp) {
+          conditions.push("(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(COALESCE(whatsapp,''),' ',''),'-',''),'(',''),')',''),'+','') = ?)");
+          args.push(whatsapp);
+        }
+        const sqlDup = `SELECT id, nome_razao_social, email, whatsapp FROM clientes WHERE ativo = 1 AND (${conditions.join(" OR ")}) LIMIT 1`;
+        const result = await client.execute({ sql: sqlDup, args });
+        const row = result.rows[0] || null;
+        return { statusCode: 200, body: JSON.stringify(row) };
+      }
+
       const sql = `SELECT * FROM clientes WHERE ativo = 1 ORDER BY nome_razao_social ASC`;
       const result = await client.execute(sql);
       return { statusCode: 200, body: JSON.stringify(result.rows) };

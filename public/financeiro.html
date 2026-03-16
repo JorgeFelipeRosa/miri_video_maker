@@ -1,13 +1,14 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Miriã Storymaker | Financeiro</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-
+    <link rel="stylesheet" href="/css/components/toast.css">
+    <script src="/js/modules/toast.js"></script>
     <link rel="stylesheet" href="/css/base/variables.css">
     <link rel="stylesheet" href="/css/base/reset.css">
     <link rel="stylesheet" href="/css/base/global.css">
@@ -23,18 +24,21 @@
 
         <main class="main-content">
             
-            <header class="header-std">
+           <header class="header-std">
                 <div class="header-left">
-                    <button id="menu-toggle" class="btn-circle-glass"><i class="ph ph-list"></i></button>
+                    <button id="menu-toggle" class="btn-circle-glass" aria-label="Menu"><i class="ph ph-list"></i></button>
                     <div>
                         <h2 class="title-std">Financeiro</h2>
-                        <p style="font-size: 12px; color: var(--text-secondary);">Fluxo de Caixa (Entradas)</p>
+                        <p class="header-subtitle">Fluxo de Caixa (Entradas)</p>
                     </div>
                 </div>
-                <div class="month-filter glass-card">
-                    <button id="btnPrevMonth"><i class="ph ph-caret-left"></i></button>
-                    <span id="labelMonth">NOVEMBRO 2025</span>
-                    <button id="btnNextMonth"><i class="ph ph-caret-right"></i></button>
+
+                <div class="header-right">
+                    <div class="month-filter glass-card">
+                        <button id="btnPrevMonth" class="nav-arrow" type="button" aria-label="Mês anterior"><i class="ph ph-caret-left"></i></button>
+                        <span id="labelMonth" class="month-navigator-label">MÊS</span>
+                        <button id="btnNextMonth" class="nav-arrow" type="button" aria-label="Próximo mês"><i class="ph ph-caret-right"></i></button>
+                    </div>
                 </div>
             </header>
 
@@ -62,6 +66,6 @@
 
     <script src="/js/utils/format.js"></script>
     <script src="/js/modules/sidebar.js"></script>
-    <script src="/js/pages/financeiro.js"></script> 
+    <script src="/js/controllers/financeiro.js"></script> 
 </body>
 </html>

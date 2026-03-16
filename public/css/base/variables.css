@@ -1,84 +1,91 @@
-﻿/* Arquivo: public/css/base/variables.css
-    Tema: Dark Luxury Glassmorphism
-    Descrição: Definição central de cores, tipografia e efeitos.
-*/
+/* Tema: Aconchegante – eventos (mesma pegada do formulário, sem fotos de fundo) */
 
 :root {
     /* =========================================
-       1. PALETA DE CORES (Brand Colors)
+       1. PALETA ACONCHEGANTE
        ========================================= */
-    
-    /* Fundo Infinito (Não é preto puro, é um chumbo profundo para dar profundidade) */
-    --bg-body: #0f0f10; 
-    --bg-dark: #050505;
 
-    /* Dourado Premium (Gold Luxury) */
-    --gold-100: #F9Eeb8; /* Brilho */
-    --gold-400: #D4AF37; /* Base Dourada (Metálica) */
-    --gold-500: #C5A028;
-    --gold-700: #8A6E15; /* Sombra Dourada */
+    /* Fundos */
+    --bg-body: #f5f0ea;
+    --bg-dark: #3d3a36;
 
-    /* Gradiente Dourado (Para botões e destaques) */
-    --gradient-gold: linear-gradient(135deg, var(--gold-400) 0%, var(--gold-700) 100%);
+    /* Dourado quente (eventos) */
+    --gold-100: #f5e6c8;
+    --gold-300: #d4a84b;
+    --gold-400: #b8860b;
+    --gold-500: #9a7309;
+    --gold-700: #7a5c07;
 
-    /* Status (Semântica) */
-    --success: #2ecc71; /* Verde esmeralda */
-    --danger: #e74c3c;  /* Vermelho suave */
-    --warning: #f1c40f; /* Amarelo alerta */
-    
+    /* Gradiente dourado */
+    --gradient-gold: linear-gradient(145deg, var(--gold-400) 0%, var(--gold-700) 100%);
+
+    /* Status */
+    --success: #2e8b57;
+    --danger: #c0392b;
+    --warning: #c9a227;
+
     /* Texto */
-    --text-primary: #FFFFFF;
-    --text-secondary: #A0A0A0; /* Cinza prateado */
-    --text-muted: #555555;
+    --text-primary: #3d3a36;
+    --text-secondary: #6b6560;
+    --text-muted: #a39e97;
 
     /* =========================================
-       2. EFEITO DE VIDRO (Glassmorphism)
+       2. CARDS E SUPERFÍCIES (vidro claro)
        ========================================= */
-    
-    /* Vidro Base (Cards, Paineis) */
-    --glass-bg: rgba(255, 255, 255, 0.05); /* 5% de branco */
-    --glass-border: rgba(255, 255, 255, 0.1); /* Borda sutil */
-    --glass-shine: rgba(255, 255, 255, 0.08); /* Efeito hover */
-    --glass-blur: 12px; /* O desfoque do fundo */
-    
-    /* Sombra de Profundidade (Glow Dourado Sutil) */
-    --shadow-luxury: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
-    --glow-gold: 0 0 15px rgba(212, 175, 55, 0.3);
+
+    --glass-bg: rgba(255, 255, 255, 0.85);
+    --glass-border: rgba(184, 134, 11, 0.2);
+    --glass-shine: rgba(255, 255, 255, 0.6);
+    --glass-blur: 16px;
+
+    --shadow-luxury: 0 8px 32px rgba(61, 58, 54, 0.12);
+    --glow-gold: 0 0 0 3px rgba(184, 134, 11, 0.2);
 
     /* =========================================
-       3. TIPOGRAFIA
+       3. TIPOGRAFIA (eventos)
        ========================================= */
-    
-    /* Títulos Elegantes (Serifa - Lembra convite de casamento) */
-    --font-display: 'Cinzel', serif; 
-    
-    /* Texto de Leitura (Sans Serif - Moderno e legível) */
-    --font-body: 'Inter', sans-serif;
 
-    /* Tamanhos */
-    --text-xs: 0.75rem;   /* 12px */
-    --text-sm: 0.875rem;  /* 14px */
-    --text-base: 1rem;    /* 16px */
-    --text-lg: 1.125rem;  /* 18px */
-    --text-xl: 1.25rem;   /* 20px */
-    --text-2xl: 1.5rem;   /* 24px */
+    --font-display: 'Cormorant Garamond', 'Cinzel', serif;
+    --font-body: 'Outfit', 'Inter', sans-serif;
+
+    --text-xs: 0.75rem;
+    --text-sm: 0.875rem;
+    --text-base: 1rem;
+    --text-lg: 1.125rem;
+    --text-xl: 1.25rem;
+    --text-2xl: 1.5rem;
 
     /* =========================================
        4. BORDAS E ESPAÇAMENTOS
        ========================================= */
+
     --radius-sm: 8px;
-    --radius-md: 16px; /* Padrão dos Cards */
+    --radius-md: 16px;
     --radius-lg: 24px;
-    --radius-full: 9999px; /* Botões redondos */
+    --radius-full: 9999px;
 
     --spacing-sm: 0.5rem;
     --spacing-md: 1rem;
     --spacing-lg: 1.5rem;
     --spacing-xl: 2rem;
-    
+
     /* =========================================
-       5. TRANSIÇÕES (Animações Suaves)
+       5. TRANSIÇÕES
        ========================================= */
+
     --transition-fast: 0.2s ease;
     --transition-smooth: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* =========================================
+       6. ÍCONES E HEADER (padronização)
+       ========================================= */
+
+    --icon-sm: 1.125rem;   /* 18px – botões pequenos, inputs */
+    --icon-md: 1.25rem;    /* 20px – header, ações */
+    --icon-lg: 1.5rem;     /* 24px – sidebar, cards */
+    --header-min-height: 72px;
+    --header-gap: 12px;
+
+    /* Layout modo PC: coluna fixa para padronizar menu/título em todas as telas */
+    --content-max-width: 920px;
 }

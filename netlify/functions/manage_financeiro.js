@@ -1,6 +1,5 @@
-﻿/* netlify/functions/manage_financeiro.js - VERSÃO EXTRATO (TUDO É PAGO) */
-const { createClient } = require("@libsql/client");
-const client = createClient({ url: process.env.TURSO_DATABASE_URL, authToken: process.env.TURSO_AUTH_TOKEN });
+/* netlify/functions/manage_financeiro.js */
+const client = require("./_shared/_db.js");
 
 exports.handler = async function(event) {
   if (event.httpMethod !== "POST") return { statusCode: 405, body: "Method Not Allowed" };

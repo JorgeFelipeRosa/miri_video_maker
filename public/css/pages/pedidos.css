@@ -1,22 +1,64 @@
-﻿/* public/css/pages/pedidos.css */
+/* public/css/pages/pedidos.css - ALINHADO */
 
+/* === 1. LAYOUT GERAL === */
 .main-content {
-    overflow: hidden; /* O Kanban tem scroll próprio */
+    overflow: hidden; /* O Kanban tem scroll horizontal próprio */
     display: flex;
     flex-direction: column;
     height: 100vh;
-    padding-bottom: 0 !important; /* Remove padding extra aqui */
+    padding-bottom: 0 !important;
+    /* O padding lateral já vem do global.css */
 }
 
-/* --- BOARD CONTAINER --- */
+/* === 2. BARRA DE PESQUISA PADRONIZADA === */
+/* Container para igualar o espaçamento com a tela de Orçamentos */
+.search-bar-container {
+    margin-bottom: var(--spacing-md);
+    /* Removemos paddings manuais para alinhar com o header acima */
+}
+
+.input-icon-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.search-icon {
+    position: absolute;
+    left: 16px;
+    color: var(--gold-400);
+    font-size: 1.2rem;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.search-input {
+    padding-left: 48px !important;
+    background: rgba(255, 255, 255, 0.9) !important;
+    border: 1px solid var(--glass-border);
+    height: 50px;
+    border-radius: 12px;
+    width: 100%;
+    color: var(--text-primary);
+    transition: 0.2s;
+}
+
+.search-input:focus {
+    border-color: var(--gold-400);
+    box-shadow: var(--glow-gold);
+}
+
+/* === 3. KANBAN BOARD === */
 .kanban-board {
     display: flex;
     gap: var(--spacing-md);
-    overflow-x: auto; /* Rolagem Horizontal */
+    overflow-x: auto;
     overflow-y: hidden;
     height: 100%;
     padding-bottom: 20px;
-    padding-right: 20px;
+    /* Remove padding-right excessivo que desalinhava o final */
+    padding-right: 4px; 
     
     scrollbar-width: thin;
     scrollbar-color: var(--gold-700) transparent;
@@ -25,16 +67,16 @@
 .kanban-board::-webkit-scrollbar { height: 8px; }
 .kanban-board::-webkit-scrollbar-thumb { background: var(--gold-700); border-radius: 4px; }
 
-/* --- COLUNAS --- */
+/* COLUNAS */
 .kanban-column {
     min-width: 280px;
     max-width: 320px;
-    background: rgba(255, 255, 255, 0.03);
+    background: var(--glass-bg);
     border: 1px solid var(--glass-border);
     border-radius: 16px;
     display: flex;
     flex-direction: column;
-    height: calc(100% - 20px); /* Ajuste altura */
+    height: calc(100% - 20px);
 }
 
 .column-header {
@@ -49,14 +91,14 @@
 }
 
 .column-header .count {
-    background: rgba(255,255,255,0.1);
+    background: rgba(184, 134, 11, 0.15);
     padding: 2px 8px;
     border-radius: 10px;
     font-size: 0.7rem;
-    color: #fff;
+    color: var(--text-primary);
 }
 
-/* Cores dos Títulos */
+/* Cores das Colunas */
 .header-agendado { color: var(--text-secondary); border-top: 3px solid var(--text-secondary); border-radius: 16px 16px 0 0; }
 .header-gravando { color: var(--warning); border-top: 3px solid var(--warning); border-radius: 16px 16px 0 0; }
 .header-edicao { color: #9b59b6; border-top: 3px solid #9b59b6; border-radius: 16px 16px 0 0; }
@@ -71,10 +113,10 @@
     gap: 12px;
 }
 
-/* --- CARDS --- */
+/* CARDS */
 .kanban-card {
-    background: linear-gradient(145deg, rgba(40,40,40,1) 0%, rgba(20,20,20,1) 100%);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
     border-radius: 12px;
     padding: 16px;
     cursor: grab;
@@ -83,99 +125,37 @@
 }
 
 .kanban-card:active { cursor: grabbing; }
-.kanban-card:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.5); border-color: rgba(255,255,255,0.1); }
+.kanban-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-luxury); border-color: rgba(184, 134, 11, 0.3); }
 
 .card-top { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.75rem; color: var(--text-secondary); }
 .card-date { display: flex; align-items: center; gap: 4px; font-weight: 600; }
 .card-title { color: var(--text-primary); font-size: 0.95rem; font-weight: 600; margin-bottom: 4px; line-height: 1.4; }
 .card-local { color: var(--text-muted); font-size: 0.75rem; display: flex; align-items: center; gap: 4px; }
 
-/* Estilos Especiais */
 .active-work { border-left: 3px solid #9b59b6; }
 .finished { opacity: 0.7; }
 
-/* =========================================
-   ESTILOS DO MODAL (NOVO)
-   ========================================= */
-.modal-overlay {
-    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(5px);
-    z-index: 9999; display: none;
-    align-items: center; justify-content: center; padding: 10px;
-}
-.modal-overlay.active { display: flex; }
+/* Navegação do Card (< >) */
+.nav-btn { color: var(--text-secondary); cursor: pointer; padding: 4px; border-radius: 4px; transition: 0.2s; }
+.nav-btn:hover { background: rgba(184, 134, 11, 0.1); color: var(--gold-400); }
 
-.modal-glass {
-    width: 100%; max-width: 600px;
-    background: #151516; border: 1px solid var(--gold-400); border-radius: var(--radius-md);
-    padding: var(--spacing-xl); box-shadow: 0 0 50px rgba(0,0,0,0.8);
-    display: flex; flex-direction: column; max-height: 90vh;
-}
-
-.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.modal-header h3 { font-family: 'Cinzel', serif; color: var(--gold-400); font-size: 1.2rem; margin: 0; }
-.btn-close-modal { background: transparent; border: none; color: var(--text-secondary); font-size: 1.5rem; cursor: pointer; }
-
-.modal-body-scroll { overflow-y: auto; padding-right: 5px; }
-
-/* ABAS */
+/* === 4. MODAL (base em modal.css) – estilos específicos do pedido === */
 .modal-tabs { display: flex; gap: 20px; margin-bottom: 20px; border-bottom: 1px solid var(--glass-border); }
-.tab-btn {
-    background: transparent; border: none; color: var(--text-secondary);
-    padding: 10px 0; cursor: pointer; border-bottom: 2px solid transparent;
-    font-weight: 600; transition: 0.2s;
-}
-.tab-btn.active { color: var(--gold-400); border-bottom-color: var(--gold-400); }
 .tab-content { display: none; }
 .tab-content.active { display: block; animation: fadeIn 0.3s; }
-
-/* FINANCEIRO */
 .finance-summary { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-.fin-card { background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px; text-align: center; border: 1px solid var(--glass-border); }
-.fin-card small { font-size: 0.65rem; color: #888; display: block; }
-.fin-card span { font-size: 0.9rem; font-weight: 700; color: #fff; }
+.fin-card { background: rgba(184, 134, 11, 0.08); padding: 10px; border-radius: 8px; text-align: center; border: 1px solid var(--glass-border); }
+.fin-card small { font-size: 0.65rem; color: var(--text-muted); display: block; }
+.fin-card span { font-size: 0.9rem; font-weight: 700; color: var(--text-primary); }
 .fin-card.due span { color: var(--danger); }
 .fin-card.paid span { color: var(--success); }
-
 .add-payment-box { display: flex; gap: 8px; margin-bottom: 15px; }
-.btn-icon-action-plus {
-    background: var(--gold-400); color: #000; width: 40px; border-radius: 8px;
-    display: flex; align-items: center; justify-content: center; font-size: 1.2rem; transition: 0.2s;
-}
-.btn-icon-action-plus:hover { background: #fff; }
-
 .payment-list { display: flex; flex-direction: column; gap: 8px; }
-.payment-item {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 12px; background: rgba(255,255,255,0.05); border-radius: 8px;
-}
-.pay-check {
-    width: 24px; height: 24px; border-radius: 50%; border: 2px solid #555;
-    display: flex; align-items: center; justify-content: center; cursor: pointer; color: transparent; transition: 0.2s;
-}
-.pay-check.paid { background: var(--success); border-color: var(--success); color: #000; }
-
-/* Inputs dentro do Modal */
+.payment-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: rgba(184, 134, 11, 0.06); border-radius: 8px; }
+.pay-check { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--text-muted); display: flex; align-items: center; justify-content: center; cursor: pointer; color: transparent; transition: 0.2s; }
+.pay-check.paid { background: var(--success); border-color: var(--success); color: #fff; }
 .row-2-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .input-group { display: flex; flex-direction: column; gap: 6px; }
 .input-group label { color: var(--text-secondary); font-size: 0.85rem; }
-
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-/* Mobile */
-@media (max-width: 768px) {
-    .kanban-board { scroll-snap-type: x mandatory; padding-bottom: 10px; }
-    .kanban-column { min-width: 85vw; scroll-snap-align: center; }
-}
-/* No final do arquivo */
-.nav-btn {
-    color: var(--text-secondary);
-    cursor: pointer;
-    padding: 4px;
-    border-radius: 4px;
-    transition: 0.2s;
-}
-.nav-btn:hover {
-    background: rgba(255,255,255,0.1);
-    color: var(--gold-400);
-}
+@media (max-width: 768px) { .kanban-board { scroll-snap-type: x mandatory; padding-bottom: 10px; } .kanban-column { min-width: 85vw; scroll-snap-align: center; } }

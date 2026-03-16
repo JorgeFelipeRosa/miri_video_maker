@@ -1,14 +1,7 @@
-﻿/* public/css/pages/financeiro.css */
+/* public/css/pages/financeiro.css */
 
 .main-content {
-    flex: 1;
-    height: 100vh;
-    overflow-y: auto;
-    padding: var(--spacing-lg);
     padding-bottom: 150px;
-    width: 100%;
-    max-width: 900px;
-    margin: 0 auto;
 }
 
 /* Filtro de Mês (No Header) */
@@ -20,9 +13,8 @@
     border-radius: 50px;
     border: 1px solid var(--glass-border);
 }
-.month-filter button { color: #fff; font-size: 1.2rem; cursor: pointer; transition: 0.2s; }
-.month-filter button:hover { color: var(--gold-400); }
-.month-filter span { font-family: 'Cinzel', serif; font-weight: 700; color: var(--gold-400); min-width: 140px; text-align: center; }
+.month-filter .nav-arrow { flex-shrink: 0; }
+.month-filter .month-navigator-label { margin: 0; }
 
 /* KPIs (Cards de Resumo) */
 .finance-dashboard {
@@ -40,13 +32,13 @@
     gap: 8px;
 }
 .fin-kpi-card small { font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; }
-.fin-kpi-card h3 { font-size: 1.8rem; font-weight: 700; color: #fff; }
+.fin-kpi-card h3 { font-size: 1.8rem; font-weight: 700; color: var(--text-primary); }
 
 .fin-kpi-card.received h3 { color: var(--success); }
 .fin-kpi-card.pending h3 { color: var(--warning); }
 
 .section-title {
-    font-family: 'Cinzel', serif;
+    font-family: var(--font-display);
     color: var(--text-primary);
     margin-bottom: 15px;
     font-size: 1.2rem;
@@ -62,31 +54,29 @@
 
 .trans-row {
     display: grid;
-    grid-template-columns: 80px 1fr auto; /* Data | Info | Valor */
+    grid-template-columns: 80px 1fr auto;
     align-items: center;
     padding: 16px;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
+    border-bottom: 1px solid var(--glass-border);
     transition: 0.2s;
 }
 .trans-row:last-child { border-bottom: none; }
-.trans-row:hover { background: rgba(255,255,255,0.03); }
+.trans-row:hover { background: rgba(184, 134, 11, 0.04); }
 
-/* Coluna Data */
 .trans-date {
     display: flex;
     flex-direction: column;
     align-items: center;
-    background: rgba(255,255,255,0.05);
+    background: rgba(184, 134, 11, 0.08);
     padding: 6px;
     border-radius: 8px;
     width: 60px;
 }
-.trans-day { font-size: 1.2rem; font-weight: 700; color: #fff; }
+.trans-day { font-size: 1.2rem; font-weight: 700; color: var(--text-primary); }
 .trans-month { font-size: 0.6rem; text-transform: uppercase; color: var(--text-secondary); }
 
-/* Coluna Info */
 .trans-info { padding-left: 15px; }
-.trans-desc { font-size: 1rem; color: #fff; font-weight: 500; display: block; }
+.trans-desc { font-size: 1rem; color: var(--text-primary); font-weight: 500; display: block; }
 .trans-client { font-size: 0.8rem; color: var(--text-secondary); }
 
 /* Coluna Valor */

@@ -1,4 +1,4 @@
-﻿/* public/js/modules/sidebar.js - CARREGADOR AUTOMÁTICO */
+/* public/js/modules/sidebar.js - CARREGADOR AUTOMÁTICO */
 
 document.addEventListener("DOMContentLoaded", async () => {
     
@@ -50,22 +50,25 @@ function highlightActiveLink() {
     });
 }
 
+const DESKTOP_BREAKPOINT = 769;
+
 function initMobileMenu() {
-    const menuBtn = document.getElementById('menu-toggle'); // Esse botão está no Header da página
+    const menuBtn = document.getElementById('menu-toggle');
     const sidebar = document.querySelector('.sidebar');
     const mainContent = document.querySelector('.main-content');
 
     if (menuBtn && sidebar) {
         menuBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            sidebar.classList.toggle('active');
+            if (window.innerWidth < DESKTOP_BREAKPOINT) {
+                sidebar.classList.toggle('active');
+            }
         });
     }
 
-    // Fechar ao clicar fora
     if (mainContent && sidebar) {
         mainContent.addEventListener('click', () => {
-            if (sidebar.classList.contains('active')) {
+            if (window.innerWidth < DESKTOP_BREAKPOINT && sidebar.classList.contains('active')) {
                 sidebar.classList.remove('active');
             }
         });

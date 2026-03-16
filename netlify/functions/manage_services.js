@@ -1,10 +1,5 @@
-﻿/* netlify/functions/manage_services.js */
-const { createClient } = require("@libsql/client");
-
-const client = createClient({
-  url: process.env.TURSO_DATABASE_URL,
-  authToken: process.env.TURSO_AUTH_TOKEN,
-});
+/* netlify/functions/manage_services.js */
+const client = require("./_shared/_db.js");
 
 exports.handler = async function(event) {
   try {

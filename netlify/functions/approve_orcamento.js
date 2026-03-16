@@ -1,10 +1,5 @@
-﻿/* netlify/functions/approve_orcamento.js - CORRIGIDO (COPIA ITENS) */
-const { createClient } = require("@libsql/client");
-
-const client = createClient({
-  url: process.env.TURSO_DATABASE_URL,
-  authToken: process.env.TURSO_AUTH_TOKEN,
-});
+/* netlify/functions/approve_orcamento.js */
+const client = require("./_shared/_db.js");
 
 // Função de segurança para evitar nulos
 const safe = (val) => (val === undefined || val === null) ? null : val;

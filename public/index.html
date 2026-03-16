@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -7,10 +7,11 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
 
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-
+    <link rel="stylesheet" href="/css/components/toast.css">
+    <script src="/js/modules/toast.js"></script>
     <link rel="stylesheet" href="css/base/variables.css">
     <link rel="stylesheet" href="css/base/reset.css">
     <link rel="stylesheet" href="css/base/global.css">
@@ -73,13 +74,16 @@
                 <button type="submit" class="btn-primary" style="margin-top: var(--spacing-sm);">
                     Entrar no Sistema
                 </button>
+
+                <p style="margin-top: var(--spacing-md); font-size: 0.85rem; color: var(--text-secondary);">
+                    <a href="formulario.html" style="color: var(--gold-400); text-decoration: none;">Sou cliente e quero solicitar um orçamento</a>
+                </p>
             </form>
 
         </div>
     </main>
 
     <script src="js/utils/dom.js"></script>
-    <script src="js/utils/dom.js"></script>
-    <script src="js/pages/login.js"></script> 
+    <script src="js/controllers/login.js"></script>
     </body>
 </html>
