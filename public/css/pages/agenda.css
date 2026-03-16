@@ -1,4 +1,4 @@
-﻿/* public/css/pages/agenda.css */
+/* public/css/pages/agenda.css */
 
 .main-content {
     overflow-y: auto;
@@ -8,15 +8,27 @@
 
 /* --- NAVEGADOR DO MÊS --- */
 .month-navigator {
-    display: flex; align-items: center; gap: 20px;
-    padding: 10px 20px; border-radius: 50px;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: 8px 16px;
+    border-radius: var(--radius-full);
     border: 1px solid var(--glass-border);
+    background: var(--glass-bg);
 }
+.month-navigator-label,
 .month-navigator h3 {
-    font-family: 'Cinzel', serif; color: var(--gold-400); font-size: 1.1rem; width: 180px; text-align: center;
+    font-family: var(--font-display);
+    color: var(--gold-400);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    width: 180px;
+    text-align: center;
+    white-space: nowrap;
+    margin: 0;
 }
 .nav-arrow {
-    color: #fff; font-size: 1.2rem; padding: 5px; cursor: pointer; transition: 0.2s;
+    color: var(--text-primary); font-size: 1.2rem; padding: 5px; cursor: pointer; transition: 0.2s;
 }
 .nav-arrow:hover { color: var(--gold-400); transform: scale(1.2); }
 
@@ -60,7 +72,7 @@
 
 /* Célula do Dia */
 .calendar-day {
-    background: rgba(255,255,255,0.02);
+    background: rgba(255,255,255,0.6);
     border-radius: 12px;
     border: 1px solid transparent;
     cursor: pointer;
@@ -70,9 +82,9 @@
     transition: 0.2s;
 }
 
-.calendar-day:hover { background: rgba(255,255,255,0.08); border-color: var(--glass-border); }
-.calendar-day.today { border: 1px solid var(--gold-400); background: rgba(212,175,55,0.05); }
-.calendar-day.selected { background: var(--gradient-gold); color: #000; transform: scale(1.05); z-index: 2; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+.calendar-day:hover { background: rgba(255,255,255,0.9); border-color: var(--glass-border); }
+.calendar-day.today { border: 1px solid var(--gold-400); background: rgba(184,134,11,0.12); }
+.calendar-day.selected { background: var(--gradient-gold); color: #fff; transform: scale(1.05); z-index: 2; box-shadow: 0 8px 24px rgba(184,134,11,0.35); }
 
 .day-number { font-size: 1rem; font-weight: 600; }
 
@@ -92,26 +104,26 @@
 .details-header {
     border-bottom: 1px solid var(--glass-border); padding-bottom: 15px; margin-bottom: 15px;
 }
-.details-header h2 { font-family: 'Cinzel', serif; color: #fff; font-size: 1.5rem; }
+.details-header h2 { font-family: var(--font-display); color: var(--text-primary); font-size: 1.5rem; }
 .details-header span { color: var(--text-secondary); font-size: 0.8rem; }
 
 .events-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
 
 /* Cards de Evento no Painel */
 .agenda-card {
-    background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border);
+    background: rgba(255,255,255,0.7); border: 1px solid var(--glass-border);
     border-radius: 12px; padding: 15px;
     border-left: 3px solid var(--text-muted);
     transition: 0.2s;
 }
-.agenda-card:hover { transform: translateX(5px); background: rgba(255,255,255,0.05); }
+.agenda-card:hover { transform: translateX(5px); background: rgba(255,255,255,0.9); }
 
-.agenda-card.status-1 { border-left-color: var(--gold-400); } /* Agendado */
-.agenda-card.status-2 { border-left-color: var(--warning); } /* Gravando */
-.agenda-card.status-3 { border-left-color: #9b59b6; } /* Edição */
-.agenda-card.status-4 { border-left-color: var(--success); } /* Entregue */
+.agenda-card.status-1 { border-left-color: var(--gold-400); }
+.agenda-card.status-2 { border-left-color: var(--warning); }
+.agenda-card.status-3 { border-left-color: #9b59b6; }
+.agenda-card.status-4 { border-left-color: var(--success); }
 
-.agenda-card h4 { color: #fff; font-size: 1rem; margin-bottom: 4px; }
+.agenda-card h4 { color: var(--text-primary); font-size: 1rem; margin-bottom: 4px; }
 .agenda-card p { color: var(--text-secondary); font-size: 0.8rem; display: flex; align-items: center; gap: 5px; }
 
 .empty-state {

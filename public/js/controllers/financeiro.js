@@ -1,4 +1,7 @@
-﻿/* public/js/pages/financeiro.js */
+﻿/* public/js/controllers/financeiro.js - REFATORADO */
+
+import { FinanceiroService } from '../services/financeiro_service.js';
+import { Format } from '../utils/format.js'; // Opcional, se quiser usar formatação centralizada
 
 document.addEventListener('DOMContentLoaded', async () => {
     
@@ -9,44 +12,41 @@ document.addEventListener('DOMContentLoaded', async () => {
     const kpiPendente = document.getElementById('kpiPendente');
 
     let ALL_DATA = [];
-    let currentDate = new Date(); // Data do filtro
+    let currentDate = new Date();
 
-    // 1. CARREGAR DADOS
+    // --- 1. Inicialização ---
+    await carregarDados();
+
     async function carregarDados() {
         try {
             listContainer.innerHTML = '<p style="text-align:center; padding:20px; color:#666;">Carregando finanças...</p>';
             
-            const res = await fetch('/.netlify/functions/get_financeiro_geral');
-            ALL_DATA = await res.json();
+            ALL_DATA = await FinanceiroService.listarGeral(); // <--- SERVICE
             
             renderizarTela();
 
         } catch (e) {
             console.error(e);
-            listContainer.innerHTML = '<p style="color:var(--danger); text-align:center;">Erro ao carregar.</p>';
+            listContainer.innerHTML = '<p style="color:var(--danger); text-align:center;">Erro ao carregar dados.</p>';
         }
     }
 
-    // 2. FILTRAR E RENDERIZAR
+    // --- 2. Renderização e Filtros ---
     function renderizarTela() {
-        // Filtra pelo Mês/Ano selecionado
         const mesAlvo = currentDate.getMonth();
         const anoAlvo = currentDate.getFullYear();
 
-        // Atualiza Label
         const nomesMeses = ["JANEIRO","FEVEREIRO","MARÇO","ABRIL","MAIO","JUNHO","JULHO","AGOSTO","SETEMBRO","OUTUBRO","NOVEMBRO","DEZEMBRO"];
         lblMonth.innerText = `${nomesMeses[mesAlvo]} ${anoAlvo}`;
 
-        // Filtra itens
+        // Filtra itens do mês
         const itensMes = ALL_DATA.filter(item => {
-            // Usa data de vencimento como referência
             if(!item.data_vencimento) return false;
-            // Corrige bug de timezone criando data com horas zeradas
             const d = new Date(item.data_vencimento + "T12:00:00"); 
             return d.getMonth() === mesAlvo && d.getFullYear() === anoAlvo;
         });
 
-        // Calcula Totais
+        // Totais
         let total = 0;
         let recebido = 0;
         
@@ -56,11 +56,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             listContainer.innerHTML = '<p style="text-align:center; padding:40px; color:#666;">Nenhum lançamento neste mês.</p>';
         } else {
             itensMes.forEach(item => {
-                const valor = item.valor_parcela || 0;
+                const valor = parseFloat(item.valor_parcela) || 0;
                 total += valor;
                 if (item.pago === 1) recebido += valor;
 
-                // Cria linha HTML
+                // Data formatada
                 const d = new Date(item.data_vencimento + "T12:00:00");
                 const dia = String(d.getDate()).padStart(2,'0');
                 const mesAbrev = nomesMeses[d.getMonth()].substring(0,3);
@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     </div>
                     <div class="trans-info">
                         <span class="trans-desc">${item.descricao}</span>
-                        <span class="trans-client">${item.cliente} • ${item.titulo_evento}</span>
+                        <span class="trans-client">${item.cliente || 'Cliente'} • ${item.titulo_evento || '-'}</span>
                     </div>
                     <div class="trans-value">
                         <span class="amount ${item.pago === 1 ? 'paid' : 'pending'}">
@@ -85,10 +85,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                         </span>
                     </div>
                 `;
-                // Futuramente: Adicionar clique para ir ao pedido
-                div.addEventListener('click', () => {
-                    // window.location.href = `pedidos.html` // (Opcional)
-                });
+                
+                // Opcional: Link para o pedido ao clicar
+                if(item.id_pedido_capa) {
+                    div.style.cursor = 'pointer';
+                    // div.onclick = () => window.location.href = `pedidos.html?id=${item.id_pedido_capa}`; // Se quiser habilitar
+                }
                 
                 listContainer.appendChild(div);
             });
@@ -100,7 +102,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         kpiPendente.innerText = (total - recebido).toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
     }
 
-    // 3. BOTÕES DE NAVEGAÇÃO
+    // --- 3. Navegação ---
     document.getElementById('btnPrevMonth').addEventListener('click', () => {
         currentDate.setMonth(currentDate.getMonth() - 1);
         renderizarTela();
@@ -110,7 +112,4 @@ document.addEventListener('DOMContentLoaded', async () => {
         currentDate.setMonth(currentDate.getMonth() + 1);
         renderizarTela();
     });
-
-    // Start
-    carregarDados();
 });

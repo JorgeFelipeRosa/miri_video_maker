@@ -1,53 +1,70 @@
-﻿/* public/js/pages/pedidos.js */
+﻿/* public/js/controllers/pedidos.js - REFATORADO */
+
+import { PedidoService } from '../services/pedido_service.js';
+import { FinanceiroService } from '../services/financeiro_service.js';
+import { ListaService } from '../services/lista_service.js';
+import { Modal } from '../modules/modal.js';
+import { Toast } from '../modules/toast.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
+    console.log("Iniciando Pedidos Controller...");
 
-    const colunas = { 1: document.getElementById('col-agendado'), 2: document.getElementById('col-gravando'), 3: document.getElementById('col-edicao'), 4: document.getElementById('col-entregue') };
-    const contadores = { 1: document.querySelector('.header-agendado .count'), 2: document.querySelector('.header-gravando .count'), 3: document.querySelector('.header-edicao .count'), 4: document.querySelector('.header-entregue .count') };
+    // --- ELEMENTOS ---
+    const colunas = { 
+        1: document.getElementById('col-agendado'), 
+        2: document.getElementById('col-gravando'), 
+        3: document.getElementById('col-edicao'), 
+        4: document.getElementById('col-entregue') 
+    };
     
-    const modal = document.getElementById('modalPedido');
+    const contadores = { 
+        1: document.querySelector('.header-agendado .count'), 
+        2: document.querySelector('.header-gravando .count'), 
+        3: document.querySelector('.header-edicao .count'), 
+        4: document.querySelector('.header-entregue .count') 
+    };
+    
     const tabs = document.querySelectorAll('.tab-btn');
     const tabContents = document.querySelectorAll('.tab-content');
-    const filtroInput = document.getElementById('filtroKanban'); // Input de Busca
-    
+    const filtroInput = document.getElementById('filtroKanban');
+
+    // Estado
     let cardArrastado = null;
     let PEDIDO_ATUAL_ID = null;
     let CLIENTE_ATUAL_ID = null;
     let FORMAS_PAGAMENTO = [];
 
-    // INIT
+    // --- 1. INICIALIZAÇÃO ---
     await carregarFormasPagamento();
-    carregarPedidos();
+    await carregarPedidos();
 
-    async function carregarFormasPagamento() {
-        try {
-            const res = await fetch('/.netlify/functions/manage_lists?table=formas_pagamento');
-            FORMAS_PAGAMENTO = await res.json();
-            const select = document.getElementById('novaParcelaMetodo');
-            if (select) {
-                select.innerHTML = '<option value="">Forma...</option>';
-                if(Array.isArray(FORMAS_PAGAMENTO)) {
-                    FORMAS_PAGAMENTO.forEach(f => select.innerHTML += `<option value="${f.id}">${f.descricao}</option>`);
-                }
-            }
-        } catch (e) { console.error("Erro formas pgto", e); }
-    }
-
+    // --- 2. KANBAN (Listagem) ---
     async function carregarPedidos() {
         try {
-            const res = await fetch('/.netlify/functions/get_pedidos');
-            const pedidos = await res.json();
-            Object.values(colunas).forEach(col => col.innerHTML = '');
+            const pedidos = await PedidoService.listar(); // <--- SERVICE
+            
+            // Limpa colunas
+            Object.values(colunas).forEach(col => { if(col) col.innerHTML = ''; });
             const counts = { 1:0, 2:0, 3:0, 4:0 };
 
-            pedidos.forEach(p => {
-                const card = criarCard(p);
-                const s = p.id_status || 1;
-                if(colunas[s]) { colunas[s].appendChild(card); counts[s]++; }
-            });
+            if (Array.isArray(pedidos)) {
+                pedidos.forEach(p => {
+                    const card = criarCard(p);
+                    const s = p.id_status || 1; 
+                    if(colunas[s]) { 
+                        colunas[s].appendChild(card); 
+                        counts[s]++; 
+                    }
+                });
+            }
+
             atualizarContadores(counts);
             configurarDragAndDrop();
-        } catch (e) { console.error(e); }
+            
+        } catch (e) { 
+            console.error("Erro Kanban:", e);
+            Toast.show("Erro ao carregar pedidos", "error");
+        }
     }
 
     function criarCard(data) {
@@ -56,38 +73,33 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if(data.data_evento) {
             try {
-                const partes = data.data_evento.toString().split('-');
-                const dia = partes[2].substring(0, 2);
+                const [ano, mes, dia] = data.data_evento.split('-');
                 const meses = ["JAN","FEV","MAR","ABR","MAI","JUN","JUL","AGO","SET","OUT","NOV","DEZ"];
-                dataTexto = `${dia} ${meses[parseInt(partes[1]) - 1]}`;
+                dataTexto = `${dia} ${meses[parseInt(mes)-1]}`;
 
-                // Verifica Atraso (Se não estiver entregue e data < hoje)
-                if (data.id_status < 4) {
-                    const hoje = new Date();
-                    hoje.setHours(0,0,0,0);
-                    const dataEvento = new Date(partes[0], parseInt(partes[1])-1, dia);
-                    if (dataEvento < hoje) isAtrasado = true;
-                }
+                const hoje = new Date().toISOString().split('T')[0];
+                if (data.data_evento < hoje && data.id_status < 4) isAtrasado = true;
             } catch (e) {}
         }
-        
+
         const card = document.createElement('div');
         card.className = 'kanban-card';
         card.dataset.id = data.id;
         card.draggable = true;
+        
         if(data.id_status === 3) card.classList.add('active-work');
         if(data.id_status === 4) card.classList.add('finished');
 
-        const prevBtn = data.id_status > 1 ? `<i class="ph ph-caret-left nav-btn" onclick="moverStatus(${data.id}, ${data.id_status - 1}, event)"></i>` : '<span></span>';
-        const nextBtn = data.id_status < 4 ? `<i class="ph ph-caret-right nav-btn" onclick="moverStatus(${data.id}, ${data.id_status + 1}, event)"></i>` : '<span></span>';
+        const warning = isAtrasado ? '<i class="ph ph-warning" style="color:var(--danger); margin-left:5px;"></i>' : '';
+        const dateStyle = isAtrasado ? 'color:var(--danger)' : '';
 
-        // Ícone de Atraso
-        const warningIcon = isAtrasado ? '<i class="ph ph-warning" style="color:var(--danger); margin-left:5px;" title="Atrasado"></i>' : '';
-        const dateColor = isAtrasado ? 'color:var(--danger);' : '';
+        // Botões de Navegação (< >) agora chamam função global que usa o Service
+        const prevBtn = data.id_status > 1 ? `<i class="ph ph-caret-left nav-btn" onclick="moverCard(${data.id}, ${data.id_status - 1})"></i>` : '<span></span>';
+        const nextBtn = data.id_status < 4 ? `<i class="ph ph-caret-right nav-btn" onclick="moverCard(${data.id}, ${data.id_status + 1})"></i>` : '<span></span>';
 
         card.innerHTML = `
             <div class="card-top">
-                <span class="card-date" style="${dateColor}"><i class="ph ph-calendar"></i> ${dataTexto} ${warningIcon}</span>
+                <span class="card-date" style="${dateStyle}"><i class="ph ph-calendar"></i> ${dataTexto} ${warning}</span>
                 <i class="ph ph-dots-three-vertical options-icon"></i>
             </div>
             <h3 class="card-title">${data.titulo_evento || 'Sem Título'}</h3>
@@ -98,54 +110,58 @@ document.addEventListener('DOMContentLoaded', async () => {
                 ${nextBtn}
             </div>
         `;
-        card.addEventListener('click', (e) => { if(!e.target.classList.contains('nav-btn')) abrirDetalhes(data.id); });
+        
+        card.addEventListener('click', (e) => { 
+            if(!e.target.classList.contains('nav-btn')) abrirDetalhes(data.id); 
+        });
+
         return card;
     }
 
-    // LÓGICA DE FILTRO / BUSCA
-    if (filtroInput) {
-        filtroInput.addEventListener('input', (e) => {
-            const termo = e.target.value.toLowerCase();
-            document.querySelectorAll('.kanban-card').forEach(card => {
-                const texto = card.innerText.toLowerCase();
-                card.style.display = texto.includes(termo) ? 'block' : 'none';
-            });
-        });
+    function atualizarContadores(c) { 
+        Object.keys(c).forEach(k => { if(contadores[k]) contadores[k].innerText = c[k]; }); 
     }
 
-    window.moverStatus = async (id, novoStatus, e) => {
-        if(e) e.stopPropagation();
+    // Função de mover card (Setas ou DragDrop)
+    window.moverCard = async (id, novoStatus) => {
         try {
-            await fetch('/.netlify/functions/manage_pedido_actions', { method: 'POST', body: JSON.stringify({ action: 'update_status_data', id_pedido: id, id_status: novoStatus }) });
-            carregarPedidos();
-        } catch(err) { alert("Erro ao mover"); }
+            await PedidoService.salvarAcao({ 
+                action: 'update_status_data', 
+                id_pedido: id, 
+                id_status: novoStatus 
+            });
+            carregarPedidos(); 
+        } catch(err) { Toast.show("Erro ao mover", "error"); }
     };
 
-    function atualizarContadores(c) { Object.keys(c).forEach(k => { if(contadores[k]) contadores[k].innerText = c[k]; }); }
-
-    // --- MODAL DETALHES ---
+    // --- 3. MODAL DETALHES ---
     async function abrirDetalhes(id) {
         PEDIDO_ATUAL_ID = id;
-        modal.classList.add('active');
+        Modal.open('modalPedido'); // <--- MODAL
         trocarAba('tab-info'); 
         await atualizarDadosModal(id);
     }
 
     async function atualizarDadosModal(id) {
         try {
-            const res = await fetch(`/.netlify/functions/get_pedido_detalhes?id=${id}`);
-            const data = await res.json();
+            const data = await PedidoService.buscarPorId(id); // <--- SERVICE
+            
             CLIENTE_ATUAL_ID = data.pedido.id_cliente;
 
+            // Resumo
             document.getElementById('detalheTitulo').innerText = data.pedido.titulo_evento;
             document.getElementById('detalheCliente').value = data.pedido.nome_razao_social;
             document.getElementById('detalheStatus').value = data.pedido.id_status;
             document.getElementById('detalheData').value = data.pedido.data_evento;
 
+            // Itens
             const listaItens = document.getElementById('listaEditavelItens');
             listaItens.innerHTML = '';
-            data.itens.forEach(i => adicionarItemEditavel(i.nome_item, i.valor_final));
+            if (data.itens) {
+                data.itens.forEach(i => adicionarItemEditavel(i.nome_item, i.valor_final));
+            }
 
+            // Endereço
             const p = data.pedido;
             document.getElementById('endCep').value = p.cep || '';
             document.getElementById('endCidade').value = p.cidade || '';
@@ -154,14 +170,26 @@ document.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('endBairro').value = p.bairro || '';
             document.getElementById('endUf').value = p.uf || '';
 
+            // Financeiro
             preencherFinanceiro(data);
 
-        } catch (e) { console.error("Erro ao atualizar modal:", e); }
+        } catch (e) { console.error(e); Toast.show("Erro ao abrir detalhes", "error"); }
     }
 
-    // --- FINANCEIRO ---
+    // --- 4. FINANCEIRO E LISTAS ---
+    async function carregarFormasPagamento() {
+        try {
+            FORMAS_PAGAMENTO = await ListaService.listar('formas_pagamento'); // <--- SERVICE
+            const select = document.getElementById('novaParcelaMetodo');
+            if (select) {
+                select.innerHTML = '<option value="">Forma...</option>';
+                FORMAS_PAGAMENTO.forEach(f => select.innerHTML += `<option value="${f.id}">${f.descricao}</option>`);
+            }
+        } catch (e) { console.error(e); }
+    }
+
     function preencherFinanceiro(data) {
-        const parcelas = data.financeiro;
+        const parcelas = data.financeiro || [];
         const lista = document.getElementById('listaParcelas');
         lista.innerHTML = '';
         
@@ -170,7 +198,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         parcelas.forEach(p => {
             const valor = parseFloat(p.valor_parcela || p.valor) || 0; 
-            totalPago += valor;
+            totalPago += valor; // Modo extrato: tudo é pago
             
             const formaObj = FORMAS_PAGAMENTO.find(f => f.id === p.id_forma_pagamento);
             const nomeForma = formaObj ? formaObj.descricao : '...';
@@ -197,19 +225,20 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('finPago').innerText = totalPago.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
         
         const falta = totalContrato - totalPago;
-        document.getElementById('finFalta').innerText = falta.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+        const elFalta = document.getElementById('finFalta');
+        elFalta.innerText = falta.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
         
         if(falta <= 0) {
-            document.getElementById('finFalta').style.color = 'var(--success)';
-            document.getElementById('finFalta').innerText = "QUITADO";
+            elFalta.style.color = 'var(--success)';
+            elFalta.innerText = "QUITADO";
         } else {
-            document.getElementById('finFalta').style.color = 'var(--danger)';
+            elFalta.style.color = 'var(--danger)';
         }
     }
 
     window.deletarParcela = async (id) => {
-        if(!confirm("Apagar?")) return;
-        await fetch('/.netlify/functions/manage_financeiro', { method: 'POST', body: JSON.stringify({ action: 'delete', id_parcela: id }) });
+        if(!confirm("Remover este pagamento?")) return;
+        await FinanceiroService.salvar({ action: 'delete', id_parcela: id }); // <--- SERVICE
         atualizarDadosModal(PEDIDO_ATUAL_ID);
     };
     
@@ -219,50 +248,70 @@ document.addEventListener('DOMContentLoaded', async () => {
         const data = document.getElementById('novaParcelaData').value;
         const metodo = document.getElementById('novaParcelaMetodo').value;
         
-        if(!desc || !valor || !data) return alert("Preencha os dados");
+        if(!desc || !valor || !data) return Toast.show("Preencha todos os campos", "error");
 
         const btn = document.getElementById('btnAddParcela');
         const original = btn.innerHTML;
         btn.innerHTML = '<i class="ph ph-spinner ph-spin"></i>';
 
         try {
-            await fetch('/.netlify/functions/manage_financeiro', {
-                method: 'POST',
-                body: JSON.stringify({
-                    action: 'create',
-                    id_pedido: PEDIDO_ATUAL_ID,
-                    descricao: desc,
-                    valor: valor,
-                    vencimento: data,
-                    id_forma_pagamento: metodo,
-                    ja_pago: true // Sempre pago agora
-                })
+            await FinanceiroService.salvar({ // <--- SERVICE
+                action: 'create',
+                id_pedido: PEDIDO_ATUAL_ID,
+                descricao: desc,
+                valor: valor,
+                vencimento: data,
+                id_forma_pagamento: metodo
             });
             
             document.getElementById('novaParcelaDesc').value = '';
             document.getElementById('novaParcelaValor').value = '';
+            
             atualizarDadosModal(PEDIDO_ATUAL_ID);
 
-        } catch(e) {
-            console.error(e);
-        } finally {
-            btn.innerHTML = original;
-        }
+        } catch(e) { Toast.show("Erro ao adicionar", "error"); } 
+        finally { btn.innerHTML = original; }
     });
 
-    // --- SALVAMENTOS OUTROS ---
+    // --- 5. SALVAR DADOS GERAIS ---
+    
+    // Status/Data
     document.getElementById('btnSalvarResumo').onclick = async () => {
-        await salvarGeral({ action: 'update_status_data', id_pedido: PEDIDO_ATUAL_ID, id_status: document.getElementById('detalheStatus').value, data_evento: document.getElementById('detalheData').value });
+        await salvarGeral({ 
+            action: 'update_status_data', 
+            id_pedido: PEDIDO_ATUAL_ID, 
+            id_status: document.getElementById('detalheStatus').value, 
+            data_evento: document.getElementById('detalheData').value 
+        });
     };
+
+    // Endereço
     document.getElementById('btnSalvarEndereco').onclick = async () => {
-        await salvarGeral({ action: 'update_address', id_cliente: CLIENTE_ATUAL_ID, cep: document.getElementById('endCep').value, cidade: document.getElementById('endCidade').value, rua: document.getElementById('endRua').value, num: document.getElementById('endNum').value, bairro: document.getElementById('endBairro').value, uf: document.getElementById('endUf').value });
+        await salvarGeral({ 
+            action: 'update_address', 
+            id_cliente: CLIENTE_ATUAL_ID, 
+            cep: document.getElementById('endCep').value, 
+            cidade: document.getElementById('endCidade').value, 
+            rua: document.getElementById('endRua').value, 
+            num: document.getElementById('endNum').value, 
+            bairro: document.getElementById('endBairro').value, 
+            uf: document.getElementById('endUf').value 
+        });
     };
+
+    // Itens
     document.getElementById('btnAddItemExtra').onclick = () => adicionarItemEditavel("Novo Item", 0);
     document.getElementById('btnSalvarItens').onclick = async () => {
         const itens = [];
-        document.querySelectorAll('.item-edit-row').forEach(row => { itens.push({ nome: row.querySelector('.name-input').value, valor: row.querySelector('.val-input').value }); });
+        document.querySelectorAll('.item-edit-row').forEach(row => { 
+            itens.push({ 
+                nome: row.querySelector('.name-input').value, 
+                valor: row.querySelector('.val-input').value 
+            }); 
+        });
         await salvarGeral({ action: 'update_items', id_pedido: PEDIDO_ATUAL_ID, itens: itens });
     };
+
     function adicionarItemEditavel(nome, valor) {
         const div = document.createElement('div');
         div.className = 'item-edit-row';
@@ -270,16 +319,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         div.innerHTML = `<input type="text" class="input-glass name-input" value="${nome}" style="flex:2;"><input type="number" class="input-glass val-input" value="${valor}" style="flex:1;"><i class="ph ph-trash" style="color:var(--danger); cursor:pointer;" onclick="this.parentElement.remove()"></i>`;
         document.getElementById('listaEditavelItens').appendChild(div);
     }
+
     async function salvarGeral(payload) {
         try {
-            const res = await fetch('/.netlify/functions/manage_pedido_actions', { method: 'POST', body: JSON.stringify(payload) });
-            if(!res.ok) throw new Error("Erro");
-            alert("Salvo com sucesso!");
+            const res = await PedidoService.salvarAcao(payload); // <--- SERVICE
+            Toast.show("Salvo com sucesso!", "success");
             carregarPedidos();
             if(payload.action === 'update_items') atualizarDadosModal(PEDIDO_ATUAL_ID);
-        } catch(e) { alert("Erro ao salvar"); }
+        } catch(e) { Toast.show("Erro ao salvar", "error"); }
     }
 
+    // --- UTILS E DRAG & DROP ---
     function trocarAba(tabId) {
         tabs.forEach(t => t.classList.remove('active'));
         tabContents.forEach(c => c.classList.remove('active'));
@@ -287,15 +337,28 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById(tabId).classList.add('active');
     }
     tabs.forEach(t => t.addEventListener('click', () => trocarAba(t.dataset.tab)));
-    document.querySelectorAll('.btn-close-modal').forEach(b => b.addEventListener('click', () => modal.classList.remove('active')));
+    
+    // Filtro
+    if (filtroInput) {
+        filtroInput.addEventListener('input', (e) => {
+            const termo = e.target.value.toLowerCase();
+            document.querySelectorAll('.kanban-card').forEach(card => {
+                const txt = card.innerText.toLowerCase();
+                card.style.display = txt.includes(termo) ? 'block' : 'none';
+            });
+        });
+    }
 
+    // Drag & Drop
     function configurarDragAndDrop() {
         const cards = document.querySelectorAll('.kanban-card');
         const dropzones = document.querySelectorAll('.column-body');
+
         cards.forEach(card => {
             card.addEventListener('dragstart', () => { cardArrastado = card; card.classList.add('dragging'); });
             card.addEventListener('dragend', () => { card.classList.remove('dragging'); cardArrastado = null; });
         });
+
         dropzones.forEach(zone => {
             zone.addEventListener('dragover', (e) => { e.preventDefault(); zone.classList.add('drag-over'); });
             zone.addEventListener('dragleave', () => { zone.classList.remove('drag-over'); });
@@ -307,8 +370,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                     if(zone.id === 'col-gravando') novoStatus = 2;
                     if(zone.id === 'col-edicao') novoStatus = 3;
                     if(zone.id === 'col-entregue') novoStatus = 4;
-                    await fetch('/.netlify/functions/manage_pedido_actions', { method: 'POST', body: JSON.stringify({ action: 'update_status_data', id_pedido: cardArrastado.dataset.id, id_status: novoStatus }) });
-                    carregarPedidos();
+                    
+                    await window.moverCard(cardArrastado.dataset.id, novoStatus); // Reutiliza função
                 }
             });
         });

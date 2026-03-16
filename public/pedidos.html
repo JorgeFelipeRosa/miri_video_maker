@@ -1,11 +1,11 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Miriã Storymaker | Produção</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
     <link rel="stylesheet" href="/css/base/variables.css">
@@ -14,27 +14,31 @@
     <link rel="stylesheet" href="/css/components/sidebar.css">
     <link rel="stylesheet" href="/css/components/buttons.css">
     <link rel="stylesheet" href="/css/components/inputs.css">
+    <link rel="stylesheet" href="/css/components/toast.css">
+    <link rel="stylesheet" href="/css/components/modal.css">
     <link rel="stylesheet" href="/css/pages/pedidos.css"> 
 </head>
 <body>
 
     <div class="app-container">
         <div id="sidebar-container"></div>
-        
-        <main class="main-content">
+        <main class="main-content main-content--wide">
             
             <header class="header-std">
                 <div class="header-left">
-                    <button id="menu-toggle" class="btn-circle-glass"><i class="ph ph-list"></i></button>
-                    <div><h2 class="title-std">Produção</h2><p style="font-size: 12px; color: var(--text-secondary);">Fluxo de Trabalho</p></div>
+                    <button id="menu-toggle" class="btn-circle-glass" aria-label="Menu"><i class="ph ph-list"></i></button>
+                    <div>
+                        <h2 class="title-std">Produção</h2>
+                        <p class="header-subtitle">Fluxo de Trabalho</p>
+                    </div>
                 </div>
-                <div class="date-display"><span>KANBAN</span></div>
+                <div class="header-right"></div>
             </header>
 
-            <div style="margin-bottom: 20px; padding: 0 5px;">
+            <div class="search-bar-container">
                 <div class="input-icon-wrapper">
                     <i class="ph ph-magnifying-glass search-icon"></i>
-                    <input type="text" id="filtroKanban" class="input-glass search-input" placeholder="Filtrar por nome ou título..." style="max-width: 400px;">
+                    <input type="text" id="filtroKanban" class="input-glass search-input" placeholder="Filtrar por nome ou título...">
                 </div>
             </div>
 
@@ -48,7 +52,7 @@
     </div>
 
     <div class="modal-overlay" id="modalPedido">
-        <div class="modal-glass" style="max-width: 700px;">
+        <div class="modal-glass modal-lg">
             <div class="modal-header">
                 <h3 id="detalheTitulo">Detalhes</h3>
                 <button type="button" class="btn-close-modal"><i class="ph ph-x"></i></button>
@@ -60,6 +64,7 @@
                 <button class="tab-btn" data-tab="tab-fin">Financeiro</button>
             </div>
             <div class="modal-body-scroll">
+                
                 <div id="tab-info" class="tab-content active">
                     <div class="row-2-col">
                         <div class="input-group"><label>Cliente</label><input type="text" id="detalheCliente" class="input-glass" readonly></div>
@@ -74,20 +79,23 @@
                         </div>
                     </div>
                     <div class="input-group" style="margin-top:12px;"><label>Data do Evento</label><input type="date" id="detalheData" class="input-glass"></div>
-                    <button id="btnSalvarResumo" class="btn-primary" style="margin-top: 20px;">SALVAR DATA/STATUS</button>
+                    <button id="btnSalvarResumo" class="btn-primary btn-block-mt">SALVAR DATA/STATUS</button>
                 </div>
+
                 <div id="tab-itens" class="tab-content">
                     <div id="listaEditavelItens" style="display:flex; flex-direction:column; gap:8px; margin-bottom:20px;"></div>
-                    <button id="btnAddItemExtra" class="btn-secondary" style="width:100%; margin-bottom:10px;">+ Adicionar Item</button>
+                    <button id="btnAddItemExtra" class="btn-secondary btn-full mb-sm">+ Adicionar Item</button>
                     <button id="btnSalvarItens" class="btn-primary">SALVAR ALTERAÇÕES</button>
                 </div>
+
                 <div id="tab-end" class="tab-content">
                     <div class="row-2-col"><div class="input-group"><label>CEP</label><input type="text" id="endCep" class="input-glass"></div><div class="input-group"><label>Cidade</label><input type="text" id="endCidade" class="input-glass"></div></div>
                     <div class="input-group"><label>Rua</label><input type="text" id="endRua" class="input-glass"></div>
                     <div class="row-2-col"><div class="input-group"><label>Número</label><input type="text" id="endNum" class="input-glass"></div><div class="input-group"><label>Bairro</label><input type="text" id="endBairro" class="input-glass"></div></div>
                     <div class="input-group"><label>UF</label><input type="text" id="endUf" class="input-glass"></div>
-                    <button id="btnSalvarEndereco" class="btn-primary" style="margin-top: 20px;">ATUALIZAR ENDEREÇO</button>
+                    <button id="btnSalvarEndereco" class="btn-primary btn-block-mt">ATUALIZAR ENDEREÇO</button>
                 </div>
+
                 <div id="tab-fin" class="tab-content">
                     <div class="finance-summary">
                         <div class="fin-card total"><small>TOTAL</small><span id="finTotal">R$ 0,00</span></div>
@@ -109,7 +117,7 @@
         </div>
     </div>
 
-    <script src="/js/modules/sidebar.js"></script>
-    <script src="/js/pages/pedidos.js"></script> 
+    <script src="/js/utils/format.js"></script> <script type="module" src="/js/modules/toast.js"></script> <script src="/js/modules/sidebar.js"></script>
+    <script type="module" src="/js/controllers/pedidos.js"></script>
 </body>
 </html>

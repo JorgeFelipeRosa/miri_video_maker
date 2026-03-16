@@ -1,13 +1,14 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Miriã Storymaker | Listas</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-
+    <link rel="stylesheet" href="/css/components/toast.css">
+    <script src="/js/modules/toast.js"></script>
     <link rel="stylesheet" href="/css/base/variables.css">
     <link rel="stylesheet" href="/css/base/reset.css">
     <link rel="stylesheet" href="/css/base/global.css">
@@ -24,12 +25,13 @@
         <main class="main-content">
             <header class="header-std">
                 <div class="header-left">
-                    <button id="menu-toggle" class="btn-circle-glass"><i class="ph ph-list"></i></button>
+                    <button id="menu-toggle" class="btn-circle-glass" aria-label="Menu"><i class="ph ph-list"></i></button>
                     <div>
                         <h2 class="title-std">Configurações</h2>
-                        <p style="font-size: 12px; color: var(--text-secondary);">Gerencie suas listas auxiliares</p>
+                        <p class="header-subtitle">Gerencie listas auxiliares</p>
                     </div>
                 </div>
+                <div class="header-right"></div>
             </header>
 
             <div class="settings-container">
@@ -63,7 +65,9 @@
         </main>
     </div>
 
+    <script src="/js/utils/format.js"></script>
+    <script type="module" src="/js/modules/toast.js"></script>
     <script src="/js/modules/sidebar.js"></script>
-    <script src="/js/pages/listas.js"></script> 
+    <script type="module" src="/js/controllers/listas.js"></script>
 </body>
 </html>

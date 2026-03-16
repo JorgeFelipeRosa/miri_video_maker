@@ -1,9 +1,4 @@
-﻿const { createClient } = require("@libsql/client");
-
-const client = createClient({
-  url: process.env.TURSO_DATABASE_URL,
-  authToken: process.env.TURSO_AUTH_TOKEN,
-});
+const client = require("./_shared/_db.js");
 
 // Tabelas permitidas (Segurança para ninguém deletar a tabela errada)
 const ALLOWED_TABLES = ["categorias_servico", "formas_pagamento", "origens_contato"];

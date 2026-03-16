@@ -1,13 +1,14 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Miriã Storymaker | Orçamentos</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-
+    <link rel="stylesheet" href="/css/components/toast.css">
+    <script src="/js/modules/toast.js"></script>
     <link rel="stylesheet" href="/css/base/variables.css">
     <link rel="stylesheet" href="/css/base/reset.css">
     <link rel="stylesheet" href="/css/base/global.css">
@@ -23,15 +24,19 @@
         <div id="sidebar-container"></div>
 
         <main class="main-content">
-            <header class="page-header">
+            <header class="header-std">
                 <div class="header-left">
-                    <button class="hamburger-menu" id="menuToggle"><i class="ph ph-list"></i></button>
-                    <a href="dashboard.html" class="btn-icon-back"><i class="ph ph-arrow-left"></i></a>
-                    <h2>Orçamentos</h2>
+                    <button id="menu-toggle" class="btn-circle-glass" aria-label="Menu"><i class="ph ph-list"></i></button>
+                    <div>
+                        <h2 class="title-std">Orçamentos</h2>
+                        <p class="header-subtitle">Propostas comerciais</p>
+                    </div>
                 </div>
-                <a href="editor-orcamento.html" class="btn-primary btn-new"><i class="ph ph-plus"></i> <span>Novo</span></a>
-            </header>
 
+                <div class="header-right">
+                    <a href="editor-orcamento.html" class="btn-primary btn-new" aria-label="Novo orçamento"><i class="ph ph-plus"></i><span class="desktop-only"> Novo</span></a>
+                </div>
+            </header>
             <div class="search-bar-container">
                 <div class="input-icon-wrapper">
                     <i class="ph ph-magnifying-glass search-icon"></i>
@@ -51,6 +56,6 @@
     </div>
 
     <script src="/js/modules/sidebar.js"></script>
-    <script src="/js/pages/orcamentos.js"></script> 
+    <script type="module" src="/js/controllers/orcamentos.js"></script>
 </body>
 </html>

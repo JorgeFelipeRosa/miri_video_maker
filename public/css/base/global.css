@@ -1,41 +1,6 @@
-﻿/* public/css/base/global.css */
+/* public/css/base/global.css – tema aconchegante */
 
-:root {
-    /* --- CORES (Dark Luxury) --- */
-    --bg-body: #0f0f10; 
-    --bg-dark: #050505;
-    --gold-100: #F9Eeb8; 
-    --gold-400: #D4AF37; 
-    --gold-500: #C5A028;
-    --gold-700: #8A6E15; 
-    --gradient-gold: linear-gradient(135deg, var(--gold-400) 0%, var(--gold-700) 100%);
-    --success: #2ecc71; 
-    --danger: #e74c3c;  
-    --warning: #f1c40f; 
-    --text-primary: #FFFFFF;
-    --text-secondary: #A0A0A0; 
-    --text-muted: #555555;
-
-    /* --- VIDRO --- */
-    --glass-bg: rgba(255, 255, 255, 0.05);
-    --glass-border: rgba(255, 255, 255, 0.1);
-    --glass-blur: 12px;
-    --shadow-luxury: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
-    
-    /* --- FONTES E MEDIDAS --- */
-    --font-display: 'Cinzel', serif; 
-    --font-body: 'Inter', sans-serif;
-    --radius-sm: 8px;
-    --radius-md: 16px;
-    --radius-full: 9999px;
-    --spacing-sm: 0.5rem;
-    --spacing-md: 1rem;
-    --spacing-lg: 1.5rem;
-    --spacing-xl: 2rem;
-    --transition-fast: 0.2s ease;
-}
-
-/* --- RESET BÁSICO --- */
+/* --- RESET --- */
 * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
 body {
     background-color: var(--bg-body);
@@ -43,15 +8,25 @@ body {
     font-family: var(--font-body);
     font-size: 1rem;
     line-height: 1.5;
+    min-height: 100vh;
     -webkit-font-smoothing: antialiased;
-    overflow: hidden; /* O scroll será interno */
+    overflow-x: hidden;
+}
+
+/* Página de login (sem sidebar) */
+body .login-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-md);
 }
 a { text-decoration: none; color: inherit; }
 ul { list-style: none; }
 button { cursor: pointer; border: none; background: none; font-family: inherit; }
 input, select, textarea { border: none; background: none; font-family: inherit; }
 
-/* --- LAYOUT PADRÃO (SIDEBAR + MAIN) --- */
+/* --- LAYOUT --- */
 .app-container {
     display: flex;
     height: 100vh;
@@ -62,61 +37,134 @@ input, select, textarea { border: none; background: none; font-family: inherit; 
 .main-content {
     flex: 1;
     height: 100vh;
-    overflow-y: auto; /* Scroll aqui */
+    overflow-y: auto;
     padding: var(--spacing-lg);
     position: relative;
 }
 
-/* --- PADRÃO DE CABEÇALHO (HEADER STANDARD) --- */
+/* Modo PC: menu fixo à esquerda + coluna alinhada à esquerda */
+@media (min-width: 769px) {
+    .main-content {
+        margin-left: 280px; /* espaço da sidebar sempre visível */
+        max-width: var(--content-max-width);
+        margin-right: auto;
+        width: 100%;
+        padding-left: var(--spacing-xl);
+        padding-right: var(--spacing-xl);
+    }
+    .main-content.main-content--wide {
+        max-width: none;
+        margin-right: 0;
+    }
+}
+
+/* --- HEADER PADRÃO --- */
 .header-std {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: var(--spacing-xl);
-    padding-top: 10px;
+    min-height: var(--header-min-height);
+    height: auto;
+    margin-bottom: var(--spacing-lg);
+    padding: 10px 4px;
+    flex-wrap: nowrap;
+    gap: var(--header-gap);
 }
 
 .header-left {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: var(--header-gap);
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
 }
 
-/* Botão Redondo de Vidro */
-.btn-circle-glass {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid var(--glass-border);
-    color: var(--text-secondary);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1.3rem;
-    transition: var(--transition-fast);
-    text-decoration: none;
-}
-.btn-circle-glass:hover {
-    background: var(--gold-400);
-    color: var(--bg-dark);
-    border-color: var(--gold-400);
+.header-left .title-std {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: var(--header-gap);
+    justify-content: flex-end;
+    flex-shrink: 0;
+}
+
+/* Título e subtítulo do header */
 .title-std {
     font-family: var(--font-display);
-    font-size: 1.4rem;
+    font-size: 1.35rem;
+    font-weight: 600;
     color: var(--text-primary);
-    line-height: 1.1;
+    line-height: 1.2;
+    white-space: nowrap;
+}
+.header-subtitle {
+    font-size: var(--text-xs);
+    color: var(--text-secondary);
+    margin-top: 2px;
 }
 
-/* Scrollbar Bonita */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 10px; }
-::-webkit-scrollbar-thumb:hover { background: var(--gold-700); }
+/* Filtro de mês (header direito) */
+.month-filter {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 20px !important;
+    border-radius: var(--radius-full);
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    min-width: 220px;
+}
+.month-filter button { font-size: var(--icon-md); color: var(--text-primary); }
+.date-display {
+    background: var(--glass-bg);
+    padding: 8px 16px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--glass-border);
+    color: var(--gold-400);
+    font-weight: 700;
+    letter-spacing: 1px;
+    font-size: var(--text-xs);
+    white-space: nowrap;
+}
 
-/* Responsivo Mobile */
-@media (max-width: 1024px) {
-    .header-std { margin-top: 10px; }
-    /* No mobile a sidebar é absoluta, então damos margem no header pra não colar */
-    .main-content { padding: var(--spacing-md); }
+/* Label do seletor de mês (agenda, financeiro) */
+.month-navigator-label {
+    font-family: var(--font-display);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--gold-400);
+    white-space: nowrap;
+    min-width: 140px;
+    text-align: center;
+}
+
+/* Utilitário: esconder em mobile (ex.: texto "Novo" ao lado do ícone) */
+.desktop-only { display: inline; }
+@media (max-width: 768px) {
+    .desktop-only { display: none; }
+}
+
+/* --- RESPONSIVO --- */
+@media (max-width: 768px) {
+    .header-std {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 20px;
+    }
+    .header-left { justify-content: flex-start; }
+    .header-right {
+        justify-content: center;
+        width: 100%;
+    }
+    .month-filter {
+        width: 100%;
+        max-width: 350px;
+    }
+    .date-display { display: none; }
 }
